@@ -3,7 +3,7 @@ class Source {
   String name;
   String url;
   String mac;
-  String token;
+  String? token;
   bool enabled;
 
   Source({
@@ -11,7 +11,6 @@ class Source {
     required this.name,
     required this.url,
     required this.mac,
-    required this.token,
     this.enabled = true,
   });
 }

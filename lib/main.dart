@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:fredstalker/backend/settings_service.dart';
+import 'package:fredstalker/backend/sql.dart';
 import 'package:fredstalker/home.dart';
 import 'package:fredstalker/models/settings.dart';
+import 'package:fredstalker/setup.dart';
 
 void main() async {
   final hasSources = await Sql.hasSources();
@@ -20,7 +23,6 @@ class App extends StatelessWidget {
       title: 'Fred Stalker',
       theme: ThemeData(useMaterial3: true, brightness: Brightness.light),
       darkTheme: ThemeData(useMaterial3: true, brightness: Brightness.dark),
-      home: const Home(),
       themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
       home: skipSetup ? Home(settings: settings) : const Setup(),

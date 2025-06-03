@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:fredstalker/backend/sql.dart';
+import 'package:fredstalker/models/source.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -15,5 +17,9 @@ class Utils {
     final tempDir = join(path, "temp");
     await Directory(tempDir).create(recursive: true);
     return join(tempDir, fileName);
+  }
+
+  static Future<void> addSource(Source source) async {
+    await Sql.commitWrite([Sql.addSource(source)]);
   }
 }

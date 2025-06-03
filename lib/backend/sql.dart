@@ -22,21 +22,13 @@ class Sql {
   }
 
   static Future<void> Function(SqliteWriteContext, Map<String, String>)
-  getOrCreateSourceByName(Source source) {
+  addSource(Source source) {
     return (SqliteWriteContext tx, Map<String, String> memory) async {
-      var sourceId = (await tx.getOptional(
-        "SELECT id FROM sources WHERE name = ?",
-        [source.name],
-      ))?.columnAt(0);
-      if (sourceId != null) {
-        memory['sourceId'] = sourceId.toString();
-        return;
-      }
       await tx.execute(
         '''
-            INSERT INTO sources (name, source_type, url, username, password) VALUES (?, ?, ?, ?, ?);
+            INSERT INTO sources (name, url, mac) VALUES (?, ?, ?);
           ''',
-        [source.name, source.url, source.mac, source.token],
+        [source.name, source.url, source.mac],
       );
       memory['sourceId'] = (await tx.get(
         "SELECT last_insert_rowid();",
@@ -72,7 +64,6 @@ class Sql {
       name: row.columnAt(1),
       url: row.columnAt(3),
       mac: row.columnAt(4),
-      token: row.columnAt(5),
       enabled: row.columnAt(6) == 1,
     );
   }
