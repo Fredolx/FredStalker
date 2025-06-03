@@ -10,6 +10,6 @@ class Select extends StatefulWidget {
 class _SelectState extends State<Select> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(body: Center(child: Text("Test")));
   }
 }

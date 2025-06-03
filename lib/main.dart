@@ -3,18 +3,18 @@ import 'package:fredstalker/backend/settings_service.dart';
 import 'package:fredstalker/backend/sql.dart';
 import 'package:fredstalker/home.dart';
 import 'package:fredstalker/models/settings.dart';
+import 'package:fredstalker/select.dart';
 import 'package:fredstalker/setup.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   final hasSources = await Sql.hasSources();
-  final settings = await SettingsService.getSettings();
-  runApp(App(skipSetup: hasSources, settings: settings));
+  runApp(App(skipSetup: hasSources));
 }
 
 class App extends StatelessWidget {
   final bool skipSetup;
-  final Settings settings;
-  const App({super.key, required this.skipSetup, required this.settings});
+  const App({super.key, required this.skipSetup});
 
   // This widget is the root of your application.
   @override
@@ -25,7 +25,7 @@ class App extends StatelessWidget {
       darkTheme: ThemeData(useMaterial3: true, brightness: Brightness.dark),
       themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
-      home: skipSetup ? Home(settings: settings) : const Setup(),
+      home: skipSetup ? Select() : const Setup(),
     );
   }
 }

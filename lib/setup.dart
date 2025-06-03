@@ -62,9 +62,7 @@ class _SetupState extends State<Setup> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: widget.showAppBar
-          ? AppBar(title: const Text("Adding a new source"))
-          : null,
+      appBar: AppBar(title: const Text("Adding a new source"), elevation: 2),
       body: Loading(
         child: SafeArea(
           child: FormBuilder(
@@ -76,122 +74,131 @@ class _SetupState extends State<Setup> {
               });
             },
             key: _formKey,
-            child: Center(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.1,
-                      ),
-                      child: FormBuilderTextField(
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        validator: FormBuilderValidators.compose([
-                          FormBuilderValidators.required(),
-                          (value) {
-                            var trimmed = value?.trim();
-                            if (trimmed == null || trimmed.isEmpty) {
-                              return null;
-                            }
-                            if (existingSourceNames.contains(trimmed)) {
-                              return "Name already exists";
-                            }
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  SizedBox(height: 40),
+                  // Text(
+                  //   "Add a new source",
+                  //   style: TextStyle(
+                  //     fontSize: 30,
+                  //     fontWeight: FontWeight.bold,
+                  //   ),
+                  // ),
+                  // SizedBox(height: 20),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: MediaQuery.of(context).size.width * 0.1,
+                    ),
+                    child: FormBuilderTextField(
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(),
+                        (value) {
+                          var trimmed = value?.trim();
+                          if (trimmed == null || trimmed.isEmpty) {
                             return null;
-                          },
-                        ]),
-                        decoration: const InputDecoration(
-                          labelText: 'Name', // Label inside the input
-                          prefixIcon: Icon(
-                            Icons.edit,
-                          ), // Icon inside the input (left side)
-                          border: OutlineInputBorder(),
-                        ),
-                        name: 'name',
+                          }
+                          if (existingSourceNames.contains(trimmed)) {
+                            return "Name already exists";
+                          }
+                          return null;
+                        },
+                      ]),
+                      decoration: const InputDecoration(
+                        labelText: 'Name', // Label inside the input
+                        prefixIcon: Icon(
+                          Icons.edit,
+                        ), // Icon inside the input (left side)
+                        border: OutlineInputBorder(),
                       ),
+                      name: 'name',
                     ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.1,
-                      ),
-                      child: FormBuilderTextField(
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        validator: FormBuilderValidators.compose([
-                          FormBuilderValidators.required(),
-                        ]),
-                        decoration: const InputDecoration(
-                          labelText: 'URL', // Label inside the input
-                          prefixIcon: Icon(
-                            Icons.link,
-                          ), // Icon inside the input (left side)
-                          border: OutlineInputBorder(),
-                        ),
-                        name: 'url',
-                      ),
+                  ),
+                  SizedBox(height: 20),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: MediaQuery.of(context).size.width * 0.1,
                     ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.1,
+                    child: FormBuilderTextField(
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(),
+                      ]),
+                      decoration: const InputDecoration(
+                        labelText: 'URL', // Label inside the input
+                        prefixIcon: Icon(
+                          Icons.link,
+                        ), // Icon inside the input (left side)
+                        border: OutlineInputBorder(),
                       ),
-                      child: FormBuilderTextField(
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        validator: FormBuilderValidators.compose([
-                          FormBuilderValidators.required(),
-                        ]),
-                        decoration: const InputDecoration(
-                          labelText: 'Mac',
-                          prefixIcon: Icon(
-                            Icons.account_circle, //@TODO: find better icon
-                          ),
-                          border: OutlineInputBorder(),
-                        ),
-                        name: 'username',
-                      ),
+                      name: 'url',
                     ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: formValid
-                            ? Colors.blue
-                            : Colors.grey, // Disabled color
-                        foregroundColor: Colors.white, // Text color
+                  ),
+                  SizedBox(height: 20),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: MediaQuery.of(context).size.width * 0.1,
+                    ),
+                    child: FormBuilderTextField(
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(),
+                      ]),
+                      decoration: const InputDecoration(
+                        labelText: 'Mac',
+                        prefixIcon: Icon(
+                          Icons.account_circle, //@TODO: find better icon
+                        ),
+                        border: OutlineInputBorder(),
                       ),
-                      onPressed: () async {
-                        final sourceName =
-                            (_formKey.currentState?.instantValue["name"]
-                                    as String)
-                                .trim();
-                        if (await Sql.sourceNameExists(sourceName)) {
-                          existingSourceNames.add(sourceName);
-                        }
-                        if (_formKey.currentState?.saveAndValidate() == false) {
-                          return;
-                        }
-                        var url = _formKey.currentState?.value["url"] as String;
-                        url = await fixUrl(url!);
-                        final result = await Error.tryAsync(
-                          () async {
-                            await Utils.addSource(
-                              Source(
-                                name: sourceName,
-                                url: url,
-                                mac: _formKey.currentState?.value["username"],
-                              ),
-                            );
-                          },
-                          context,
-                          "Successfully added source",
-                        );
-                        if (result.success) {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (context) => Select()),
+                      name: 'username',
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: formValid
+                          ? Colors.blue
+                          : Colors.grey, // Disabled color
+                      foregroundColor: Colors.white, // Text color
+                    ),
+                    onPressed: () async {
+                      final sourceName =
+                          (_formKey.currentState?.instantValue["name"]
+                                  as String)
+                              .trim();
+                      if (await Sql.sourceNameExists(sourceName)) {
+                        existingSourceNames.add(sourceName);
+                      }
+                      if (_formKey.currentState?.saveAndValidate() == false) {
+                        return;
+                      }
+                      var url = _formKey.currentState?.value["url"] as String;
+                      url = await fixUrl(url!);
+                      final result = await Error.tryAsync(
+                        () async {
+                          await Utils.addSource(
+                            Source(
+                              name: sourceName,
+                              url: url,
+                              mac: _formKey.currentState?.value["username"],
+                            ),
                           );
-                        }
-                      },
-                      child: const Text("Submit"),
-                    ),
-                  ],
-                ),
+                        },
+                        context,
+                        "Successfully added source",
+                      );
+                      if (result.success) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => Select()),
+                        );
+                      }
+                    },
+                    child: const Text("Submit"),
+                  ),
+                ],
               ),
             ),
           ),
