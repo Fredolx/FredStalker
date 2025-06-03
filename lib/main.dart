@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fredstalker/home.dart';
+import 'package:fredstalker/models/settings.dart';
 
 void main() async {
   final hasSources = await Sql.hasSources();
