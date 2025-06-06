@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fredstalker/backend/settings_service.dart';
 import 'package:fredstalker/backend/sql.dart';
-import 'package:fredstalker/home.dart';
-import 'package:fredstalker/models/settings.dart';
 import 'package:fredstalker/select.dart';
 import 'package:fredstalker/setup.dart';
 

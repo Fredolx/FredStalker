@@ -14,8 +14,7 @@ class DbFactory {
           "id"          INTEGER PRIMARY KEY,
           "name"        varchar(100),
           "url"         varchar(500),
-          "mac"         varchar(100),
-          "enabled"     integer DEFAULT 1
+          "mac"         varchar(100)
         );
         ''');
           await tx.execute('''

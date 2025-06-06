@@ -52,8 +52,8 @@ class Sql {
   static Future<List<Source>> getSources() async {
     var db = await DbFactory.db;
     var results = await db.getAll('''
-      SELECT * 
-      FROM sources 
+      SELECT *
+      FROM sources
     ''');
     return results.map(rowToSource).toList();
   }
@@ -62,9 +62,8 @@ class Sql {
     return Source(
       id: row.columnAt(0),
       name: row.columnAt(1),
-      url: row.columnAt(3),
-      mac: row.columnAt(4),
-      enabled: row.columnAt(6) == 1,
+      url: row.columnAt(2),
+      mac: row.columnAt(3),
     );
   }
 
@@ -126,18 +125,6 @@ class Sql {
     return rowToSource(result);
   }
 
-  static Future<void> setSourceEnabled(bool enabled, int sourceId) async {
-    var db = await DbFactory.db;
-    await db.execute(
-      '''
-      UPDATE sources 
-      SET enabled = ? 
-      WHERE id = ?
-    ''',
-      [enabled, sourceId],
-    );
-  }
-
   static Future setPosition(int channelId, int seconds) async {
     var db = await DbFactory.db;
     await db.execute(
@@ -179,7 +166,7 @@ class Sql {
       SET last_watched = NULL
       WHERE last_watched IS NOT NULL
 		  AND id NOT IN (
-				SELECT id 
+				SELECT id
 				FROM channels
 				WHERE last_watched IS NOT NULL
 				ORDER BY last_watched DESC

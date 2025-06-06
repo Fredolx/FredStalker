@@ -3,15 +3,13 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:fredstalker/backend/sql.dart';
 import 'package:fredstalker/backend/utils.dart';
-import 'package:fredstalker/home.dart';
 import 'package:fredstalker/loading.dart';
 import 'package:fredstalker/error.dart';
 import 'package:fredstalker/models/source.dart';
 import 'package:fredstalker/select.dart';
 
 class Setup extends StatefulWidget {
-  final bool showAppBar;
-  const Setup({super.key, this.showAppBar = false});
+  const Setup({super.key});
 
   @override
   State<Setup> createState() => _SetupState();
@@ -78,14 +76,6 @@ class _SetupState extends State<Setup> {
               child: Column(
                 children: [
                   SizedBox(height: 40),
-                  // Text(
-                  //   "Add a new source",
-                  //   style: TextStyle(
-                  //     fontSize: 30,
-                  //     fontWeight: FontWeight.bold,
-                  //   ),
-                  // ),
-                  // SizedBox(height: 20),
                   Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: MediaQuery.of(context).size.width * 0.1,
@@ -146,7 +136,7 @@ class _SetupState extends State<Setup> {
                         FormBuilderValidators.required(),
                       ]),
                       decoration: const InputDecoration(
-                        labelText: 'Mac',
+                        labelText: 'Mac Address',
                         prefixIcon: Icon(
                           Icons.account_circle, //@TODO: find better icon
                         ),
