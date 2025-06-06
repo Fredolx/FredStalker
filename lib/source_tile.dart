@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fredstalker/delete_dialog.dart';
 import 'package:fredstalker/edit_dialog.dart';
+import 'package:fredstalker/home.dart';
+import 'package:fredstalker/models/memory.dart';
 import 'package:fredstalker/models/source.dart';
 
 class SourceTile extends StatefulWidget {
@@ -42,7 +44,7 @@ class _SourceTileState extends State<SourceTile> {
         onExit: (_) => setState(() => _isHovered = false),
         child: InkWell(
           borderRadius: BorderRadius.circular(12),
-          onTap: () => {},
+          onTap: select,
           child: ListTile(
             contentPadding: const EdgeInsets.only(left: 20),
             title: Text(widget.source.name),
@@ -65,6 +67,14 @@ class _SourceTileState extends State<SourceTile> {
           ),
         ),
       ),
+    );
+  }
+
+  void select() {
+    Memory.currentSource = widget.source;
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => Home()),
     );
   }
 }

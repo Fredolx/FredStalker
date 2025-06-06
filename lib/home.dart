@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:fredstalker/models/settings.dart';
 
 class Home extends StatefulWidget {
-  final Settings settings;
-  const Home({super.key, required this.settings});
+  const Home({super.key});
   @override
   State<Home> createState() => _HomeState();
 }

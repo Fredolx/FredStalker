@@ -3,6 +3,7 @@ import 'package:fredstalker/backend/sql.dart';
 import 'package:fredstalker/loading.dart';
 import 'package:fredstalker/models/source.dart';
 import 'package:fredstalker/error.dart';
+import 'package:fredstalker/setup.dart';
 import 'package:fredstalker/source_tile.dart';
 
 class Select extends StatefulWidget {
@@ -26,6 +27,12 @@ class _SelectState extends State<Select> {
       () async => sources = await Sql.getSources(),
       context,
     );
+    if (sources.isEmpty) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => Setup()),
+      );
+    }
     setState(() {
       sources;
     });

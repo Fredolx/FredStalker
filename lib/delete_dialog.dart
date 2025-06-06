@@ -33,10 +33,9 @@ class _DeleteDialogState extends State<DeleteDialog> {
         TextButton(
           onPressed: () async {
             Navigator.of(context).pop();
-            await Error.tryAsync(
+            await Error.tryAsyncNoLoading(
               () async => await Sql.deleteSource(widget.source.id!),
               context,
-              "Successfully deleted source",
             );
             await widget.ret();
           },
