@@ -4,6 +4,7 @@ import 'package:fredstalker/edit_dialog.dart';
 import 'package:fredstalker/home.dart';
 import 'package:fredstalker/models/memory.dart';
 import 'package:fredstalker/models/source.dart';
+import 'package:fredstalker/setup.dart';
 
 class AddSourceButton extends StatefulWidget {
   const AddSourceButton({super.key});
@@ -38,5 +39,7 @@ class _AddSourceButtonState extends State<AddSourceButton> {
     );
   }
 
-  add() {}
+  add() {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Setup()));
+  }
 }
