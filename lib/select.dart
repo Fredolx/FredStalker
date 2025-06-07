@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fredstalker/add_source_button.dart';
 import 'package:fredstalker/backend/sql.dart';
 import 'package:fredstalker/loading.dart';
 import 'package:fredstalker/models/source.dart';
@@ -50,6 +51,7 @@ class _SelectState extends State<Select> {
               ...sources.map(
                 (src) => SourceTile(source: src, ret: () => loadSources()),
               ),
+              AddSourceButton(),
             ],
           ),
         ),
