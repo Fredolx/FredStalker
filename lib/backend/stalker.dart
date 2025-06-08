@@ -1,3 +1,4 @@
+import 'package:fredstalker/models/responses/categories.dart';
 import 'package:fredstalker/models/responses/create_link.dart';
 import 'package:fredstalker/models/responses/episodes.dart';
 import 'package:fredstalker/models/responses/handshake.dart';
@@ -86,10 +87,22 @@ class Stalker {
     }, episodesFromJson);
   }
 
-  Future<CreateLink> createLink(String cmd) async {
+  Future<CreateLink> createLink(String cmd, int? episode) async {
     return await _get(StalkerType.live, StalkerAction.createLink, {
       "cmd": cmd,
+      if (episode != null) "series": episode.toString(),
     }, createLinkFromJson);
+  }
+
+  Future<Categories> getCategories(StalkerType type) async {
+    return await _get(
+      type,
+      type == StalkerType.live
+          ? StalkerAction.getGenres
+          : StalkerAction.getCategories,
+      {},
+      categoriesFromJson,
+    );
   }
 
   Future<T> _get<T>(
