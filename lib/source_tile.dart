@@ -72,9 +72,15 @@ class _SourceTileState extends State<SourceTile> {
   }
 
   Future<void> select() async {
-    var result = await Error.tryAsyncNoLoading(() async {
-      await Memory.selectSource(widget.source);
-    }, context);
+    var result = await Error.tryAsync(
+      () async {
+        await Memory.selectSource(widget.source);
+      },
+      context,
+      null,
+      true,
+      false,
+    );
     if (result.success)
       Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
   }

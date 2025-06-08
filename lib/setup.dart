@@ -20,43 +20,6 @@ class _SetupState extends State<Setup> {
   bool formValid = false;
   Set<String> existingSourceNames = {};
 
-  showCorrectionModal() async {
-    return await showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Is this the right URL?"),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text("Proceed anyway"),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text("Correct URL automatically"),
-          ),
-        ],
-        content: const Text(
-          "It seems your url is not pointing to a valid API server, Open TV can correct the URL automatically for you",
-        ),
-      ),
-    );
-  }
-
-  Future<String> fixUrl(String url) async {
-    var uri = Uri.parse(url);
-    if (uri.scheme.isEmpty) {
-      uri = Uri.parse("http://$uri");
-    }
-    if (uri.path == "/" || uri.path.isEmpty) {
-      if (await showCorrectionModal()) {
-        uri = uri.resolve(
-          "player_api.php",
-        ); //@TODO: Whatever stalker possibilities
-      }
-    }
-    return uri.toString();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,7 +79,7 @@ class _SetupState extends State<Setup> {
                         FormBuilderValidators.required(),
                       ]),
                       decoration: const InputDecoration(
-                        labelText: 'URL', // Label inside the input
+                        labelText: 'URL',
                         prefixIcon: Icon(
                           Icons.link,
                         ), // Icon inside the input (left side)
@@ -142,7 +105,7 @@ class _SetupState extends State<Setup> {
                         ),
                         border: OutlineInputBorder(),
                       ),
-                      name: 'username',
+                      name: 'mac',
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -164,15 +127,14 @@ class _SetupState extends State<Setup> {
                       if (_formKey.currentState?.saveAndValidate() == false) {
                         return;
                       }
-                      var url = _formKey.currentState?.value["url"] as String;
-                      url = await fixUrl(url!);
                       final result = await Error.tryAsync(
                         () async {
                           await SourceManager.addStalkerSource(
                             Source(
                               name: sourceName,
-                              url: url,
-                              mac: _formKey.currentState?.value["username"],
+                              url:
+                                  _formKey.currentState?.value["url"] as String,
+                              mac: _formKey.currentState?.value["mac"],
                             ),
                           );
                         },

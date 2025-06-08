@@ -3,21 +3,20 @@ import 'package:http/http.dart' as http;
 
 class Stalker {
   static const List<String> potentialURLs = [
-    "",
     "stalker_portal/server/load.php",
     "c/server/load.php",
     "portal.php",
   ];
-  String? _token;
   Uri _url;
-  String _mac;
+  final String _mac;
 
   Stalker(this._url, this._mac);
 
   Map<String, String> getHeaders() {
     return {
       "User-Agent":
-          "Mozilla/5.0 (QtEmbedded; U; Linux; C) AppleWebKit/533.3 (KHTML, like Gecko) MAG200 stbapp ver: 2 rev: 250 Safari/533.3X-User-Agent: Model: MAG250; Link: WiFi",
+          "Mozilla/5.0 (QtEmbedded; U; Linux; C) AppleWebKit/533.3 (KHTML, like Gecko) MAG200 stbapp ver: 2 rev: 250 Safari/533.3",
+      "X-User-Agent": "Model: MAG250; Link: WiFi",
     };
   }
 
@@ -31,15 +30,23 @@ class Stalker {
 
   Future<String> findUrl() async {
     Handshake? response;
+    try {
+      response = await _getToken(_mac);
+      if (response?.js?.token != null) {
+        return _url.toString();
+      }
+    } catch (e) {
+      print("Initial URL (${_url.toString()}) failed: $e");
+    }
     _url = _getBaseUrl(_url);
     for (var potentialURLEnding in potentialURLs) {
       _url = _url.replace(path: potentialURLEnding);
       try {
-        response = await _getToken();
+        response = await _getToken(_mac);
       } catch (e) {
-        //@Implement a good logging system
+        print("URL (${_url}) failed: $e");
       }
-      if (response != null) {
+      if (response?.js?.token != null) {
         break;
       }
     }
@@ -47,13 +54,14 @@ class Stalker {
     return _url.toString();
   }
 
-  Future<Handshake> _getToken() async {
+  Future<Handshake> _getToken(String mac) async {
     var client = http.Client();
     final fUrl = _url.replace(
       queryParameters: {
         ..._url.queryParameters,
         "type": "stb",
         "action": "handshake",
+        "mac": mac,
       },
     );
     var response = await client.get(fUrl, headers: getHeaders());
@@ -61,6 +69,10 @@ class Stalker {
   }
 
   Future<void> initialize() async {
-    _token = (await _getToken()).js!.token;
+    addBaseParams((await _getToken(_mac)).js!.token!);
+  }
+
+  addBaseParams(String token) {
+    _url.replace(queryParameters: {"mac": _mac, "token": token});
   }
 }
