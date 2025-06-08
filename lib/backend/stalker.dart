@@ -1,4 +1,9 @@
+import 'package:fredstalker/models/responses/create_link.dart';
+import 'package:fredstalker/models/responses/episodes.dart';
 import 'package:fredstalker/models/responses/handshake.dart';
+import 'package:fredstalker/models/responses/stream.dart';
+import 'package:fredstalker/models/stalker_action.dart';
+import 'package:fredstalker/models/stalker_type.dart';
 import 'package:http/http.dart' as http;
 
 class Stalker {
@@ -55,17 +60,9 @@ class Stalker {
   }
 
   Future<Handshake> _getToken(String mac) async {
-    var client = http.Client();
-    final fUrl = _url.replace(
-      queryParameters: {
-        ..._url.queryParameters,
-        "type": "stb",
-        "action": "handshake",
-        "mac": mac,
-      },
-    );
-    var response = await client.get(fUrl, headers: getHeaders());
-    return handshakeFromJson(response.body);
+    return await _get(StalkerType.stb, StalkerAction.handshake, {
+      "mac": mac,
+    }, handshakeFromJson);
   }
 
   Future<void> initialize() async {
@@ -74,5 +71,43 @@ class Stalker {
 
   addBaseParams(String token) {
     _url.replace(queryParameters: {"mac": _mac, "token": token});
+  }
+
+  Future<Stream> getStreams(int page, String search, StalkerType type) async {
+    return await _get(type, StalkerAction.getList, {
+      "search": search,
+      "p": page.toString(),
+    }, streamFromJson);
+  }
+
+  Future<Episodes> getEpisodes(String id) async {
+    return await _get(StalkerType.series, StalkerAction.getList, {
+      "movie_id": id,
+    }, episodesFromJson);
+  }
+
+  Future<CreateLink> createLink(String cmd) async {
+    return await _get(StalkerType.live, StalkerAction.createLink, {
+      "cmd": cmd,
+    }, createLinkFromJson);
+  }
+
+  Future<T> _get<T>(
+    StalkerType type,
+    StalkerAction action,
+    Map<String, String> additionalParams,
+    T Function(String) fromJson,
+  ) async {
+    var client = http.Client();
+    final fUrl = _url.replace(
+      queryParameters: {
+        ..._url.queryParameters,
+        "type": type.value,
+        "action": action.value,
+        ...additionalParams,
+      },
+    );
+    var response = await client.get(fUrl, headers: getHeaders());
+    return fromJson(response.body);
   }
 }

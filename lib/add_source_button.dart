@@ -1,9 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fredstalker/delete_dialog.dart';
-import 'package:fredstalker/edit_dialog.dart';
-import 'package:fredstalker/home.dart';
-import 'package:fredstalker/models/memory.dart';
-import 'package:fredstalker/models/source.dart';
 import 'package:fredstalker/setup.dart';
 
 class AddSourceButton extends StatefulWidget {
