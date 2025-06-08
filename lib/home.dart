@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:fredstalker/models/memory.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -11,10 +10,8 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
-      body: Center(child: Text(Memory.currentSource!.name)),
+      appBar: AppBar(title: Text("Home"), elevation: 2),
+      body: Center(),
     );
   }
 }

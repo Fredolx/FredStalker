@@ -4,6 +4,7 @@ import 'package:fredstalker/edit_dialog.dart';
 import 'package:fredstalker/home.dart';
 import 'package:fredstalker/models/memory.dart';
 import 'package:fredstalker/models/source.dart';
+import 'package:fredstalker/error.dart';
 
 class SourceTile extends StatefulWidget {
   final Source source;
@@ -70,11 +71,11 @@ class _SourceTileState extends State<SourceTile> {
     );
   }
 
-  void select() {
-    Memory.currentSource = widget.source;
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => Home()),
-    );
+  Future<void> select() async {
+    var result = await Error.tryAsyncNoLoading(() async {
+      await Memory.selectSource(widget.source);
+    }, context);
+    if (result.success)
+      Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
   }
 }

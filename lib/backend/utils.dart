@@ -18,8 +18,4 @@ class Utils {
     await Directory(tempDir).create(recursive: true);
     return join(tempDir, fileName);
   }
-
-  static Future<void> addSource(Source source) async {
-    await Sql.commitWrite([Sql.addSource(source)]);
-  }
 }

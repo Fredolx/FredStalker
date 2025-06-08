@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
+import 'package:fredstalker/backend/source_manager.dart';
 import 'package:fredstalker/backend/sql.dart';
-import 'package:fredstalker/backend/utils.dart';
 import 'package:fredstalker/loading.dart';
 import 'package:fredstalker/error.dart';
 import 'package:fredstalker/models/source.dart';
@@ -168,7 +168,7 @@ class _SetupState extends State<Setup> {
                       url = await fixUrl(url!);
                       final result = await Error.tryAsync(
                         () async {
-                          await Utils.addSource(
+                          await SourceManager.addStalkerSource(
                             Source(
                               name: sourceName,
                               url: url,
