@@ -1,9 +1,12 @@
+import 'package:fredstalker/models/channel.dart';
+import 'package:fredstalker/models/filters.dart';
 import 'package:fredstalker/models/responses/categories.dart';
 import 'package:fredstalker/models/responses/create_link.dart';
 import 'package:fredstalker/models/responses/episodes.dart';
 import 'package:fredstalker/models/responses/handshake.dart';
 import 'package:fredstalker/models/responses/stream.dart';
 import 'package:fredstalker/models/stalker_action.dart';
+import 'package:fredstalker/models/stalker_result.dart';
 import 'package:fredstalker/models/stalker_type.dart';
 import 'package:http/http.dart' as http;
 
@@ -71,14 +74,31 @@ class Stalker {
   }
 
   addBaseParams(String token) {
-    _url.replace(queryParameters: {"mac": _mac, "token": token});
+    _url = _url.replace(queryParameters: {"mac": _mac, "token": token});
   }
 
-  Future<Stream> getStreams(int page, String search, StalkerType type) async {
-    return await _get(type, StalkerAction.getList, {
-      "search": search,
-      "p": page.toString(),
-    }, streamFromJson);
+  Future<StalkerResult> getStreams(Filters filters) async {
+    return _streamResponseToStalkerResult(
+      await _get(filters.type, StalkerAction.getList, {
+        "p": filters.page.toString(),
+        if (filters.query != null) "search": filters.query!,
+      }, streamFromJson),
+    );
+  }
+
+  StalkerResult _streamResponseToStalkerResult(Stream response) {
+    return StalkerResult(
+      response.js!.maxPageItems!,
+      response.js!.data!.map(_getChannelFromStreamItem).toList(),
+    );
+  }
+
+  Channel _getChannelFromStreamItem(Data data) {
+    return Channel(
+      cmd: data.cmd,
+      image: data.screenshotUri ?? data.logo,
+      name: data.name!,
+    );
   }
 
   Future<Episodes> getEpisodes(String id) async {

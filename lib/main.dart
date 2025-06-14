@@ -1,10 +1,20 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:fredstalker/backend/sql.dart';
 import 'package:fredstalker/select.dart';
 import 'package:fredstalker/setup.dart';
 
+class ProxyHttpOverrides extends HttpOverrides {
+  @override
+  String findProxyFromEnvironment(Uri url, Map<String, String>? environment) {
+    return 'PROXY localhost:9090';
+  }
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  HttpOverrides.global = ProxyHttpOverrides();
   final hasSources = await Sql.hasSources();
   runApp(App(skipSetup: hasSources));
 }

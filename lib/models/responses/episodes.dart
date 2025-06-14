@@ -9,24 +9,24 @@ Episodes episodesFromJson(String str) => Episodes.fromJson(json.decode(str));
 String episodesToJson(Episodes data) => json.encode(data.toJson());
 
 class Episodes {
-  Js? js;
+  EpisodesJs? js;
 
   Episodes({this.js});
 
   factory Episodes.fromJson(Map<String, dynamic> json) =>
-      Episodes(js: json["js"] == null ? null : Js.fromJson(json["js"]));
+      Episodes(js: json["js"] == null ? null : EpisodesJs.fromJson(json["js"]));
 
   Map<String, dynamic> toJson() => {"js": js?.toJson()};
 }
 
-class Js {
+class EpisodesJs {
   int? totalItems;
   int? maxPageItems;
   int? selectedItem;
   int? curPage;
-  List<Data>? data;
+  List<EpisodesData>? data;
 
-  Js({
+  EpisodesJs({
     this.totalItems,
     this.maxPageItems,
     this.selectedItem,
@@ -34,14 +34,16 @@ class Js {
     this.data,
   });
 
-  factory Js.fromJson(Map<String, dynamic> json) => Js(
+  factory EpisodesJs.fromJson(Map<String, dynamic> json) => EpisodesJs(
     totalItems: json["total_items"],
     maxPageItems: json["max_page_items"],
     selectedItem: json["selected_item"],
     curPage: json["cur_page"],
     data: json["data"] == null
         ? []
-        : List<Data>.from(json["data"]!.map((x) => Data.fromJson(x))),
+        : List<EpisodesData>.from(
+            json["data"]!.map((x) => EpisodesData.fromJson(x)),
+          ),
   );
 
   Map<String, dynamic> toJson() => {
@@ -55,7 +57,7 @@ class Js {
   };
 }
 
-class Data {
+class EpisodesData {
   String? id;
   String? name;
   String? description;
@@ -71,7 +73,7 @@ class Data {
   String? genresStr;
   String? cmd;
 
-  Data({
+  EpisodesData({
     this.id,
     this.name,
     this.description,
@@ -88,7 +90,7 @@ class Data {
     this.cmd,
   });
 
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
+  factory EpisodesData.fromJson(Map<String, dynamic> json) => EpisodesData(
     id: json["id"],
     name: json["name"],
     description: json["description"],
