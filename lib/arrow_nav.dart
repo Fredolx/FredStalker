@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 
 class ArrowNav extends StatelessWidget {
   final int value;
+  final int? maxValue;
   final VoidCallback onDecrement;
   final VoidCallback onIncrement;
 
   const ArrowNav({
     super.key,
     required this.value,
+    required this.maxValue,
     required this.onDecrement,
     required this.onIncrement,
   });
@@ -22,12 +24,16 @@ class ArrowNav extends StatelessWidget {
           icon: const Icon(Icons.arrow_left, size: 32),
           onPressed: onDecrement,
         ),
-        Text('$value', style: const TextStyle(fontSize: 24)),
+        Text(getPageText(), style: const TextStyle(fontSize: 24)),
         IconButton(
           icon: const Icon(Icons.arrow_right, size: 32),
           onPressed: onIncrement,
         ),
       ],
     );
+  }
+
+  String getPageText() {
+    return "$value / $maxValue";
   }
 }

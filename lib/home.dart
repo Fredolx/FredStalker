@@ -6,6 +6,7 @@ import 'package:fredstalker/models/memory.dart';
 import 'package:fredstalker/models/stalker_type.dart';
 import 'package:fredstalker/models/view_type.dart';
 import 'package:fredstalker/tile.dart';
+import 'package:fredstalker/search_bar.dart' as search_bar;
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -17,6 +18,11 @@ class _HomeState extends State<Home> {
   Filters filters = Filters(ViewType.all, 1, StalkerType.live, null);
   List<Channel> channels = [];
   int? maxItemsPerPage;
+  int? maxPages;
+  bool initialLoading = true;
+  TextEditingController search = TextEditingController();
+  bool showSearchBar = false;
+  final FocusNode _focusNode = FocusNode();
 
   @override
   void initState() {
@@ -25,7 +31,8 @@ class _HomeState extends State<Home> {
   }
 
   initAsync() async {
-    getResults();
+    await getResults();
+    initialLoading = false;
   }
 
   getResults() async {
@@ -33,13 +40,31 @@ class _HomeState extends State<Home> {
     setState(() {
       maxItemsPerPage = result.maxItemsPerPage;
       channels = result.channels;
+      maxPages = result.maxPage;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Home"), elevation: 2),
+      appBar: AppBar(
+        title: Text("Home"),
+        elevation: 2,
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(showSearchBar ? 64 : 0),
+          child: AnimatedSize(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            child: showSearchBar
+                ? search_bar.SearchBar(
+                    searchController: search,
+                    hide: showSearchBar,
+                    focusNode: _focusNode,
+                  )
+                : SizedBox.shrink(),
+          ),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -60,15 +85,44 @@ class _HomeState extends State<Home> {
                 return Tile(channel: item);
               },
             ),
-            ArrowNav(
-              value: filters.page,
-              onDecrement: prevPage,
-              onIncrement: nextPage,
+            Visibility(
+              visible: !initialLoading,
+              child: ArrowNav(
+                value: filters.page,
+                maxValue: maxPages,
+                onDecrement: prevPage,
+                onIncrement: nextPage,
+              ),
             ),
           ],
         ),
       ),
+      floatingActionButton: Visibility(
+        visible: !showSearchBar,
+        child: FloatingActionButton(
+          onPressed: toggleSearch,
+          tooltip: 'Search',
+          child: const Icon(Icons.search),
+        ),
+      ),
     );
+  }
+
+  toggleSearch() {
+    setState(() {
+      showSearchBar = !showSearchBar;
+    });
+    if (showSearchBar) {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => FocusScope.of(context).requestFocus(_focusNode),
+      );
+    } else {
+      FocusScope.of(context).unfocus();
+      filters.query = null;
+      search.clear();
+      //  _scrollController.jumpTo(0);
+      //  load(false);
+    }
   }
 
   prevPage() async {

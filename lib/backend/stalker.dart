@@ -90,6 +90,7 @@ class Stalker {
     return StalkerResult(
       response.js!.maxPageItems!,
       response.js!.data!.map(_getChannelFromStreamItem).toList(),
+      (response.js!.totalItems! / response.js!.maxPageItems!).ceil(),
     );
   }
 
