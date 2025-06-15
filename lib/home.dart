@@ -58,29 +58,18 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Home"),
-        elevation: 2,
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(showSearchBar ? 64 : 0),
-          child: AnimatedSize(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            child: showSearchBar
-                ? search_bar.SearchBar(
-                    searchController: search,
-                    focusNode: _focusNode,
-                    toggleSearch: toggleSearch,
-                    load: getResultsQuery,
-                  )
-                : SizedBox.shrink(),
-          ),
-        ),
-      ),
+      appBar: AppBar(title: Text("Home"), elevation: 2),
       body: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            search_bar.SearchBar(
+              focusNode: _focusNode,
+              hide: showSearchBar,
+              searchController: search,
+              load: getResultsQuery,
+              toggleSearch: toggleSearch,
+            ),
             GridView.builder(
               shrinkWrap: true,
               padding: const EdgeInsets.all(16),

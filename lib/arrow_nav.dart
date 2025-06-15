@@ -20,10 +20,12 @@ class ArrowNav extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        IconButton(
-          icon: const Icon(Icons.arrow_left, size: 32),
-          onPressed: onDecrement,
-        ),
+        value != 1
+            ? IconButton(
+                icon: const Icon(Icons.arrow_left, size: 32),
+                onPressed: onDecrement,
+              )
+            : SizedBox(width: 48),
         Text(getPageText(), style: const TextStyle(fontSize: 24)),
         IconButton(
           icon: const Icon(Icons.arrow_right, size: 32),
