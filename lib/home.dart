@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fredstalker/arrow_nav.dart';
+import 'package:fredstalker/bottom_nav.dart';
 import 'package:fredstalker/models/channel.dart';
 import 'package:fredstalker/models/filters.dart';
 import 'package:fredstalker/models/memory.dart';
@@ -15,7 +16,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  Filters filters = Filters(ViewType.all, 1, StalkerType.live, null);
+  Filters filters = Filters(ViewType.all, 1, StalkerType.vod, null);
   List<Channel> channels = [];
   int? maxItemsPerPage;
   int? maxPages;
@@ -44,6 +45,16 @@ class _HomeState extends State<Home> {
     });
   }
 
+  getResultsQuery(String query) {
+    filters.query = query;
+    filters.page = 1;
+    getResults();
+  }
+
+  updateViewMode(ViewType type) {
+    throw UnimplementedError();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,8 +69,9 @@ class _HomeState extends State<Home> {
             child: showSearchBar
                 ? search_bar.SearchBar(
                     searchController: search,
-                    hide: showSearchBar,
                     focusNode: _focusNode,
+                    toggleSearch: toggleSearch,
+                    load: getResultsQuery,
                   )
                 : SizedBox.shrink(),
           ),
@@ -105,6 +117,10 @@ class _HomeState extends State<Home> {
           child: const Icon(Icons.search),
         ),
       ),
+      bottomNavigationBar: BottomNav(
+        updateViewMode: updateViewMode,
+        startingView: ViewType.all,
+      ),
     );
   }
 
@@ -119,9 +135,10 @@ class _HomeState extends State<Home> {
     } else {
       FocusScope.of(context).unfocus();
       filters.query = null;
+      filters.page = 1;
       search.clear();
       //  _scrollController.jumpTo(0);
-      //  load(false);
+      getResults();
     }
   }
 

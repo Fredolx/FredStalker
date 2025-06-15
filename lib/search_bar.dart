@@ -4,15 +4,17 @@ import 'package:flutter/material.dart';
 
 class SearchBar extends StatelessWidget {
   final TextEditingController searchController;
+  final VoidCallback toggleSearch;
+  final Function(String) load;
   SearchBar({
     super.key,
     required this.searchController,
-    required this.hide,
     required this.focusNode,
+    required this.toggleSearch,
+    required this.load,
   });
   Timer? _debounce;
   final FocusNode focusNode;
-  bool hide = false;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -26,9 +28,7 @@ class SearchBar extends StatelessWidget {
               onChanged: (query) {
                 _debounce?.cancel();
                 _debounce = Timer(const Duration(milliseconds: 500), () {
-                  // filters.query = query;
-                  // load(false);
-                  // call something on parent instead
+                  load(query);
                 });
               },
               decoration: InputDecoration(
@@ -47,7 +47,7 @@ class SearchBar extends StatelessWidget {
           SizedBox(
             width: 40,
             child: IconButton(
-              onPressed: () => {},
+              onPressed: toggleSearch,
               icon: const Icon(Icons.close),
             ),
           ),
