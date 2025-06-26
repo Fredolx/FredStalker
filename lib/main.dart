@@ -14,7 +14,7 @@ class ProxyHttpOverrides extends HttpOverrides {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  HttpOverrides.global = ProxyHttpOverrides();
+  // HttpOverrides.global = ProxyHttpOverrides();
   final hasSources = await Sql.hasSources();
   runApp(App(skipSetup: hasSources));
 }
@@ -22,8 +22,6 @@ void main() async {
 class App extends StatelessWidget {
   final bool skipSetup;
   const App({super.key, required this.skipSetup});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

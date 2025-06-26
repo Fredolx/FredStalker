@@ -4,67 +4,71 @@ import 'package:flutter/material.dart';
 
 class SearchBar extends StatelessWidget {
   final TextEditingController searchController;
-  final VoidCallback toggleSearch;
   final Function(String) load;
-  final bool hide;
+  final bool enabled;
   SearchBar({
     super.key,
     required this.searchController,
     required this.focusNode,
-    required this.toggleSearch,
     required this.load,
-    required this.hide,
+    required this.enabled,
   });
-  Timer? _debounce;
   final FocusNode focusNode;
+  Timer? _debounce;
+
+  void clear() {
+    if (searchController.text == "") return;
+    searchController.clear();
+    load("");
+  }
+
   @override
   Widget build(BuildContext context) {
-    return AnimatedSize(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-      child: hide
-          ? Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-              color: Theme.of(context).colorScheme.surface,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: searchController,
-                      focusNode: focusNode,
-                      onChanged: (query) {
-                        _debounce?.cancel();
-                        _debounce = Timer(
-                          const Duration(milliseconds: 500),
-                          () {
-                            load(query);
-                          },
-                        );
-                      },
-                      decoration: InputDecoration(
-                        hintText: "Search...",
-                        prefixIcon: const Icon(Icons.search),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide.none,
-                        ),
-                        filled: true, // Light background for contrast
-                        contentPadding: const EdgeInsets.symmetric(vertical: 0),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  SizedBox(
-                    width: 40,
-                    child: IconButton(
-                      onPressed: toggleSearch,
-                      icon: const Icon(Icons.close),
-                    ),
-                  ),
-                ],
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      color: Theme.of(context).colorScheme.surfaceContainer,
+      child: Row(
+        children: [
+          IconButton(
+            onPressed: () => Navigator.of(context).pop(),
+            icon: Icon(Icons.arrow_back),
+          ),
+          SizedBox(width: 10),
+          Expanded(
+            child: TextField(
+              enabled: enabled,
+              controller: searchController,
+              focusNode: focusNode,
+              onChanged: (query) {
+                _debounce?.cancel();
+                _debounce = Timer(const Duration(milliseconds: 500), () {
+                  load(query);
+                });
+              },
+              decoration: InputDecoration(
+                hintText: "Search...",
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide.none,
+                ),
+                filled: true, // Light background for contrast
+                contentPadding: const EdgeInsets.symmetric(vertical: 0),
               ),
-            )
-          : SizedBox.shrink(),
+            ),
+          ),
+          SizedBox(width: 10),
+          IconButton(
+            onPressed: enabled ? clear : null,
+            icon: Icon(
+              Icons.backspace_outlined,
+              color: enabled
+                  ? Theme.of(context).colorScheme.secondary
+                  : Colors.grey,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

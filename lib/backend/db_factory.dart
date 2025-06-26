@@ -35,9 +35,6 @@ class DbFactory {
           await tx.execute(
             '''CREATE UNIQUE INDEX index_source_name ON sources(name);''',
           );
-          await tx.execute(
-            '''CREATE INDEX index_source_enabled ON sources(enabled);''',
-          );
           await tx.execute('''
           CREATE UNIQUE INDEX index_movie_positions_channel_id ON movie_positions(channel_id, source_id);
         ''');

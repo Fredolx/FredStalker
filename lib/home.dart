@@ -16,14 +16,14 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  Filters filters = Filters(ViewType.all, 1, StalkerType.vod, null);
+  Filters filters = Filters(ViewType.all, 1, StalkerType.live, null);
   List<Channel> channels = [];
   int? maxItemsPerPage;
   int? maxPages;
   bool initialLoading = true;
   TextEditingController search = TextEditingController();
-  bool showSearchBar = false;
   final FocusNode _focusNode = FocusNode();
+  List<bool> isSelected = [true, false, false];
 
   @override
   void initState() {
@@ -55,24 +55,59 @@ class _HomeState extends State<Home> {
     throw UnimplementedError();
   }
 
+  updateMediaType(StalkerType type) {
+    filters.type = type;
+    getResults();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Home"), elevation: 2),
       body: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             search_bar.SearchBar(
               focusNode: _focusNode,
-              hide: showSearchBar,
+              enabled: filters.type != StalkerType.live,
               searchController: search,
               load: getResultsQuery,
-              toggleSearch: toggleSearch,
+            ),
+            SizedBox(height: 15),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ToggleButtons(
+                  borderRadius: BorderRadius.circular(10),
+                  isSelected: isSelected,
+                  onPressed: (int index) {
+                    setState(() {
+                      for (int i = 0; i < isSelected.length; i++) {
+                        isSelected[i] = i == index;
+                      }
+                    });
+                    updateMediaType(StalkerType.values[index]);
+                  },
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text("Live"),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text("Vods"),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Text("Series"),
+                    ),
+                  ],
+                ),
+              ],
             ),
             GridView.builder(
               shrinkWrap: true,
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.fromLTRB(16, 15, 16, 5),
               physics: const NeverScrollableScrollPhysics(),
               itemCount: channels.length,
               gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
@@ -98,37 +133,11 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
-      floatingActionButton: Visibility(
-        visible: !showSearchBar,
-        child: FloatingActionButton(
-          onPressed: toggleSearch,
-          tooltip: 'Search',
-          child: const Icon(Icons.search),
-        ),
-      ),
       bottomNavigationBar: BottomNav(
         updateViewMode: updateViewMode,
         startingView: ViewType.all,
       ),
     );
-  }
-
-  toggleSearch() {
-    setState(() {
-      showSearchBar = !showSearchBar;
-    });
-    if (showSearchBar) {
-      WidgetsBinding.instance.addPostFrameCallback(
-        (_) => FocusScope.of(context).requestFocus(_focusNode),
-      );
-    } else {
-      FocusScope.of(context).unfocus();
-      filters.query = null;
-      filters.page = 1;
-      search.clear();
-      //  _scrollController.jumpTo(0);
-      getResults();
-    }
   }
 
   prevPage() async {
