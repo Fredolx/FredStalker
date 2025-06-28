@@ -198,6 +198,7 @@ class Stalker {
 
   Channel _getChannelFromStreamItem(Data data) {
     return Channel(
+      id: data.id,
       cmd: data.cmd,
       image: data.screenshotUri ?? data.logo,
       name: data.name!,

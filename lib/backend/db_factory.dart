@@ -21,7 +21,7 @@ class DbFactory {
           await tx.execute('''
         CREATE TABLE "movie_positions" (
           "id" INTEGER PRIMARY KEY,
-          "channel_id" integer,
+          "channel_id" varchar(50),
           "source_id" integer,
           "position" int,
           FOREIGN KEY (source_id) REFERENCES sources(id) ON DELETE CASCADE
@@ -42,6 +42,7 @@ class DbFactory {
           await tx.execute('''
             CREATE TABLE "favorites" (
               "id" INTEGER PRIMARY KEY,
+              "stalker_id" INTEGER,
               "name" varchar(100),
               "cmd" varchar(200),
               "image" varchar(200),

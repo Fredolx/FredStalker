@@ -196,7 +196,7 @@ class Sql {
     final db = await DbFactory.db;
     final results = await db.getAll(
       '''
-      SELECT name, cmd, image
+      SELECT name, cmd, image, stalker_id
       FROM favorites
       WHERE source_id = ?
       AND name like ?
@@ -221,6 +221,7 @@ class Sql {
       name: row.columnAt(0),
       cmd: row.columnAt(1),
       image: row.columnAt(2),
+      id: row.columnAt(3),
     );
   }
 }
