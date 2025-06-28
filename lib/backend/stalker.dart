@@ -82,34 +82,7 @@ class Stalker {
   Future<StalkerResult> getStreams(Filters filters) async {
     Stream stream;
     if (filters.type == StalkerType.live) {
-      _live ??= await _get(
-        filters.type,
-        StalkerAction.getAllChannels,
-        {},
-        streamFromJson,
-      );
-      stream = Stream(
-        js: StreamJs(
-          totalItems: _live!.js!.data!.length,
-          maxPageItems: maxItemsDefault,
-        ),
-      );
-      if (filters.query != null && filters.query!.isNotEmpty) {
-        var data = _live!.js!.data!.where(
-          (x) => x.name!.toLowerCase().contains(filters.query!),
-        );
-        stream.js!.totalItems = data.length;
-        stream.js!.data = data
-            .skip((filters.page - 1) * maxItemsDefault)
-            .take(maxItemsDefault)
-            .toList();
-      } else {
-        stream.js!.data = _live!.js!.data!
-            .skip((filters.page - 1) * maxItemsDefault)
-            .take(maxItemsDefault)
-            .toList();
-      }
-      stream.js!.maxPageItems = maxItemsDefault;
+      stream = await _getLive(filters);
     } else {
       stream = await _get(filters.type, StalkerAction.getList, {
         "p": filters.page.toString(),
@@ -117,6 +90,38 @@ class Stalker {
       }, streamFromJson);
     }
     return _streamResponseToStalkerResult(stream);
+  }
+
+  Future<Stream> _getLive(Filters filters) async {
+    _live ??= await _get(
+      filters.type,
+      StalkerAction.getAllChannels,
+      {},
+      streamFromJson,
+    );
+    var stream = Stream(
+      js: StreamJs(
+        totalItems: _live!.js!.data!.length,
+        maxPageItems: maxItemsDefault,
+      ),
+    );
+    if (filters.query != null && filters.query!.isNotEmpty) {
+      var data = _live!.js!.data!.where(
+        (x) => x.name!.toLowerCase().contains(filters.query!),
+      );
+      stream.js!.totalItems = data.length;
+      stream.js!.data = data
+          .skip((filters.page - 1) * maxItemsDefault)
+          .take(maxItemsDefault)
+          .toList();
+    } else {
+      stream.js!.data = _live!.js!.data!
+          .skip((filters.page - 1) * maxItemsDefault)
+          .take(maxItemsDefault)
+          .toList();
+    }
+    stream.js!.maxPageItems = maxItemsDefault;
+    return stream;
   }
 
   StalkerResult _streamResponseToStalkerResult(Stream response) {

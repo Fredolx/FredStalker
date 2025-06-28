@@ -143,19 +143,19 @@ class _HomeState extends State<Home> {
     );
   }
 
-  prevPage() async {
+  void prevPage(bool max) async {
     if (filters.page == 1) {
       return;
     }
     setState(() {
-      filters.page--;
+      filters.page = max ? 1 : filters.page - 1;
     });
     await getResults();
   }
 
-  nextPage() async {
+  void nextPage(bool max) async {
     setState(() {
-      filters.page++;
+      filters.page = max ? maxPages! : filters.page + 1;
     });
     await getResults();
   }
