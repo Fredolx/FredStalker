@@ -105,18 +105,22 @@ class Stalker {
       _cats[filters.type] = await getCategories(filters.type);
       currentCat = _cats[filters.type];
     }
-    result.maxPage = _getPageCount(currentCat!.js!.length, maxItemsDefault);
     Iterable<Category> catsTmp;
     if (filters.query != null && filters.query!.isNotEmpty) {
-      catsTmp = currentCat.js!
-          .where((x) => x.title!.contains(filters.query!))
+      catsTmp = currentCat!.js!
+          .where(
+            (x) => x.title!.toLowerCase().trim().contains(
+              filters.query!.toLowerCase().trim(),
+            ),
+          )
           .skip((filters.page - 1) * maxItemsDefault)
           .take(maxItemsDefault);
     } else {
-      catsTmp = currentCat.js!
+      catsTmp = currentCat!.js!
           .skip((filters.page - 1) * maxItemsDefault)
           .take(maxItemsDefault);
     }
+    result.maxPage = _getPageCount(catsTmp.length, maxItemsDefault);
     result.channels = catsTmp.map(_getChannelFromCat).toList();
     return result;
   }
@@ -167,7 +171,9 @@ class Stalker {
     );
     if (filters.query != null && filters.query!.isNotEmpty) {
       var data = _live!.js!.data!.where(
-        (x) => x.name!.toLowerCase().contains(filters.query!),
+        (x) => x.name!.toLowerCase().trim().contains(
+          filters.query!.toLowerCase().trim(),
+        ),
       );
       stream.js!.totalItems = data.length;
       stream.js!.data = data
