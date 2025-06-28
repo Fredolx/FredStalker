@@ -72,7 +72,7 @@ class _HomeState extends State<Home> {
           children: [
             search_bar.SearchBar(
               focusNode: _focusNode,
-              enabled: true,
+              enabled: !initialLoading,
               searchController: search,
               load: getResultsQuery,
             ),
