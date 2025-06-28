@@ -9,24 +9,24 @@ Stream streamFromJson(String str) => Stream.fromJson(json.decode(str));
 String streamToJson(Stream data) => json.encode(data.toJson());
 
 class Stream {
-  Js? js;
+  StreamJs? js;
 
   Stream({this.js});
 
   factory Stream.fromJson(Map<String, dynamic> json) =>
-      Stream(js: json["js"] == null ? null : Js.fromJson(json["js"]));
+      Stream(js: json["js"] == null ? null : StreamJs.fromJson(json["js"]));
 
   Map<String, dynamic> toJson() => {"js": js?.toJson()};
 }
 
-class Js {
+class StreamJs {
   int? totalItems;
   int? maxPageItems;
   int? selectedItem;
   int? curPage;
   List<Data>? data;
 
-  Js({
+  StreamJs({
     this.totalItems,
     this.maxPageItems,
     this.selectedItem,
@@ -34,7 +34,7 @@ class Js {
     this.data,
   });
 
-  factory Js.fromJson(Map<String, dynamic> json) => Js(
+  factory StreamJs.fromJson(Map<String, dynamic> json) => StreamJs(
     totalItems: json["total_items"],
     maxPageItems: json["max_page_items"],
     selectedItem: json["selected_item"],

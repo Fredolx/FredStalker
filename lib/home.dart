@@ -52,11 +52,14 @@ class _HomeState extends State<Home> {
   }
 
   updateViewMode(ViewType type) {
-    throw UnimplementedError();
+    filters.view = type;
   }
 
   updateMediaType(StalkerType type) {
     filters.type = type;
+    setState(() {
+      filters.page = 1;
+    });
     getResults();
   }
 
@@ -69,7 +72,7 @@ class _HomeState extends State<Home> {
           children: [
             search_bar.SearchBar(
               focusNode: _focusNode,
-              enabled: filters.type != StalkerType.live,
+              enabled: true,
               searchController: search,
               load: getResultsQuery,
             ),

@@ -18,6 +18,8 @@ class Stalker {
   ];
   Uri _url;
   final String _mac;
+  Stream? _live;
+  static const int maxItemsDefault = 14;
 
   Stalker(this._url, this._mac);
 
@@ -78,12 +80,43 @@ class Stalker {
   }
 
   Future<StalkerResult> getStreams(Filters filters) async {
-    return _streamResponseToStalkerResult(
-      await _get(filters.type, StalkerAction.getList, {
+    Stream stream;
+    if (filters.type == StalkerType.live) {
+      _live ??= await _get(
+        filters.type,
+        StalkerAction.getAllChannels,
+        {},
+        streamFromJson,
+      );
+      stream = Stream(
+        js: StreamJs(
+          totalItems: _live!.js!.data!.length,
+          maxPageItems: maxItemsDefault,
+        ),
+      );
+      if (filters.query != null && filters.query!.isNotEmpty) {
+        var data = _live!.js!.data!.where(
+          (x) => x.name!.toLowerCase().contains(filters.query!),
+        );
+        stream.js!.totalItems = data.length;
+        stream.js!.data = data
+            .skip((filters.page - 1) * maxItemsDefault)
+            .take(maxItemsDefault)
+            .toList();
+      } else {
+        stream.js!.data = _live!.js!.data!
+            .skip((filters.page - 1) * maxItemsDefault)
+            .take(maxItemsDefault)
+            .toList();
+      }
+      stream.js!.maxPageItems = maxItemsDefault;
+    } else {
+      stream = await _get(filters.type, StalkerAction.getList, {
         "p": filters.page.toString(),
         if (filters.query != null) "search": filters.query!,
-      }, streamFromJson),
-    );
+      }, streamFromJson);
+    }
+    return _streamResponseToStalkerResult(stream);
   }
 
   StalkerResult _streamResponseToStalkerResult(Stream response) {
