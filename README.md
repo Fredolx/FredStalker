@@ -1,16 +1,14 @@
-# fredstalker
+# FredStalker
 
-A new Flutter project.
+The best Stalker IPTV experience period.
 
-## Getting Started
+# Want to make this happen? Please consider donating on [Github](https://github.com/sponsors/Fredolx), [Paypal](https://paypal.me/fredolx) or directly by [crypto](#crypto)
 
-This project is a starting point for a Flutter application.
+## Progress
 
-A few resources to get you started if this is your first Flutter project:
+https://github.com/user-attachments/assets/ed6ff83c-8800-45f5-a7bb-52a8a00b0e5d
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+
+
