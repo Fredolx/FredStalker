@@ -12,7 +12,7 @@ class SourceManager {
 
   static Future<void> addStalkerSource(Source source) async {
     source.url = fixUrl(source.url);
-    var stalker = Stalker(Uri.parse(source.url), source.mac);
+    var stalker = Stalker(Uri.parse(source.url), source.mac, source.id!);
     source.url = await stalker.findUrl();
     await Sql.commitWrite([Sql.addSource(source)]);
   }

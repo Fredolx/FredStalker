@@ -6,7 +6,7 @@ class Memory {
   static Stalker get stalker => _currentSource!;
 
   static Future<void> selectSource(Source source) async {
-    var stalker = Stalker(Uri.parse(source.url), source.mac);
+    var stalker = Stalker(Uri.parse(source.url), source.mac, source.id!);
     await stalker.initialize();
     _currentSource = stalker;
   }

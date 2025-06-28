@@ -1,4 +1,5 @@
 import 'package:fredstalker/backend/exceptions/invalid_value_exception.dart';
+import 'package:fredstalker/backend/sql.dart';
 import 'package:fredstalker/models/channel.dart';
 import 'package:fredstalker/models/filters.dart';
 import 'package:fredstalker/models/responses/categories_response.dart';
@@ -18,13 +19,14 @@ class Stalker {
     "c/server/load.php",
     "portal.php",
   ];
+  final int sourceId;
   Uri _url;
   final String _mac;
   Stream? _live;
   final Map<StalkerType, CategoriesResponse> _cats = {};
   static const int maxItemsDefault = 14;
 
-  Stalker(this._url, this._mac);
+  Stalker(this._url, this._mac, this.sourceId);
 
   Map<String, String> getHeaders() {
     return {
@@ -124,7 +126,17 @@ class Stalker {
   }
 
   Future<StalkerResult> _getFavs(Filters filters) async {
-    throw UnimplementedError();
+    final result = await Sql.searchFavs(
+      filters.query,
+      sourceId,
+      filters.page,
+      maxItemsDefault,
+    );
+    return StalkerResult(
+      maxItemsDefault,
+      result.$1,
+      _getPageCount(result.$2, maxItemsDefault),
+    );
   }
 
   Future<StalkerResult> _getAll(Filters filters) async {

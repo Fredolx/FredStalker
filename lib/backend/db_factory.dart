@@ -39,17 +39,18 @@ class DbFactory {
           await tx.execute('''
           CREATE UNIQUE INDEX index_movie_positions_channel_id ON movie_positions(channel_id, source_id);
         ''');
-        }),
-      )
-      ..add(
-        SqliteMigration(2, (tx) async {
           await tx.execute('''
             CREATE TABLE "favorites" (
               "id" INTEGER PRIMARY KEY,
               "name" varchar(100),
               "cmd" varchar(200),
-              "image" varchar(200)
+              "image" varchar(200),
+              "source_id" INTEGER,
+              FOREIGN KEY (source_id) REFERENCES sources(id) ON DELETE CASCADE
             );
+          ''');
+          await tx.execute('''
+            CREATE UNIQUE INDEX index_favorites_unique ON favorites(name, source_id);
           ''');
         }),
       );

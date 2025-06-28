@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:fredstalker/backend/db_factory.dart';
+import 'package:fredstalker/models/channel.dart';
 import 'package:fredstalker/models/source.dart';
 import 'package:sqlite_async/sqlite3.dart';
 import 'package:sqlite_async/sqlite_async.dart';
@@ -173,5 +174,53 @@ class Sql {
 				LIMIT 36
 		  )
     ''');
+  }
+
+  static Future<void> addFavorite(Channel channel, int sourceId) async {
+    var db = await DbFactory.db;
+    await db.execute(
+      '''
+      INSERT INTO favorites (name, cmd, image, source_id)
+      VALUES (?, ?, ? ,?);
+    ''',
+      [channel.name, channel.cmd, channel.image, sourceId],
+    );
+  }
+
+  static Future<(List<Channel>, int)> searchFavs(
+    String? query,
+    int sourceId,
+    int page,
+    int pageSize,
+  ) async {
+    final db = await DbFactory.db;
+    final results = await db.getAll(
+      '''
+      SELECT name, cmd, image
+      FROM favorites
+      WHERE source_id = ?
+      AND name like ?
+      LIMIT ?, ?
+    ''',
+      [sourceId, "%$query%", (page - 1) * pageSize, pageSize],
+    );
+    final int count = (await db.get(
+      '''
+    SELECT COUNT(*)
+    FROM favorites
+    WHERE source_id = ?
+    AND name LIKE ?
+    ''',
+      [sourceId, "%$query%"],
+    )).columnAt(0);
+    return (results.map(rowToChannel).toList(), count);
+  }
+
+  static Channel rowToChannel(Row row) {
+    return Channel(
+      name: row.columnAt(0),
+      cmd: row.columnAt(1),
+      image: row.columnAt(2),
+    );
   }
 }
