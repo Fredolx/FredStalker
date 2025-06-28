@@ -48,7 +48,7 @@ class Stalker {
     Handshake? response;
     try {
       response = await _getToken(_mac);
-      if (response?.js?.token != null) {
+      if (response.js?.token != null) {
         return _url.toString();
       }
     } catch (e) {
@@ -99,7 +99,7 @@ class Stalker {
   }
 
   Future<StalkerResult> _getCats(Filters filters) async {
-    StalkerResult result = StalkerResult(maxItemsDefault, List.empty(), 0);
+    final result = StalkerResult(maxItemsDefault, List.empty(), 0);
     var currentCat = _cats[filters.type];
     if (currentCat == null) {
       _cats[filters.type] = await getCategories(filters.type);
@@ -108,12 +108,12 @@ class Stalker {
     result.maxPage = _getPageCount(currentCat!.js!.length, maxItemsDefault);
     Iterable<Category> catsTmp;
     if (filters.query != null && filters.query!.isNotEmpty) {
-      catsTmp = currentCat!.js!
+      catsTmp = currentCat.js!
           .where((x) => x.title!.contains(filters.query!))
           .skip((filters.page - 1) * maxItemsDefault)
           .take(maxItemsDefault);
     } else {
-      catsTmp = currentCat!.js!
+      catsTmp = currentCat.js!
           .skip((filters.page - 1) * maxItemsDefault)
           .take(maxItemsDefault);
     }
@@ -159,7 +159,7 @@ class Stalker {
       {},
       streamFromJson,
     );
-    var stream = Stream(
+    final stream = Stream(
       js: StreamJs(
         totalItems: _live!.js!.data!.length,
         maxPageItems: maxItemsDefault,
