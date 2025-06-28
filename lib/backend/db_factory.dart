@@ -17,6 +17,7 @@ class DbFactory {
           "mac"         varchar(100)
         );
         ''');
+          //@TODO: Probably not going to work unless we match IDs
           await tx.execute('''
         CREATE TABLE "movie_positions" (
           "id" INTEGER PRIMARY KEY,
@@ -38,6 +39,18 @@ class DbFactory {
           await tx.execute('''
           CREATE UNIQUE INDEX index_movie_positions_channel_id ON movie_positions(channel_id, source_id);
         ''');
+        }),
+      )
+      ..add(
+        SqliteMigration(2, (tx) async {
+          await tx.execute('''
+            CREATE TABLE "favorites" (
+              "id" INTEGER PRIMARY KEY,
+              "name" varchar(100),
+              "cmd" varchar(200),
+              "image" varchar(200)
+            );
+          ''');
         }),
       );
     await migrations.migrate(db);

@@ -53,6 +53,8 @@ class _HomeState extends State<Home> {
 
   updateViewMode(ViewType type) {
     filters.view = type;
+    filters.page = 1;
+    getResults();
   }
 
   updateMediaType(StalkerType type) {

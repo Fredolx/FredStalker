@@ -1,6 +1,7 @@
+import 'package:fredstalker/backend/exceptions/invalid_value_exception.dart';
 import 'package:fredstalker/models/channel.dart';
 import 'package:fredstalker/models/filters.dart';
-import 'package:fredstalker/models/responses/categories.dart';
+import 'package:fredstalker/models/responses/categories_response.dart';
 import 'package:fredstalker/models/responses/create_link.dart';
 import 'package:fredstalker/models/responses/episodes.dart';
 import 'package:fredstalker/models/responses/handshake.dart';
@@ -8,6 +9,7 @@ import 'package:fredstalker/models/responses/stream.dart';
 import 'package:fredstalker/models/stalker_action.dart';
 import 'package:fredstalker/models/stalker_result.dart';
 import 'package:fredstalker/models/stalker_type.dart';
+import 'package:fredstalker/models/view_type.dart';
 import 'package:http/http.dart' as http;
 
 class Stalker {
@@ -19,6 +21,7 @@ class Stalker {
   Uri _url;
   final String _mac;
   Stream? _live;
+  final Map<StalkerType, CategoriesResponse> _cats = {};
   static const int maxItemsDefault = 14;
 
   Stalker(this._url, this._mac);
@@ -80,6 +83,51 @@ class Stalker {
   }
 
   Future<StalkerResult> getStreams(Filters filters) async {
+    switch (filters.view) {
+      case ViewType.all:
+        return _getAll(filters);
+      case ViewType.categories:
+        return _getCats(filters);
+      case ViewType.favorites:
+        return _getFavs(filters);
+      case ViewType.history:
+      case ViewType.settings:
+        throw InvalidValueException(filters.view.toString());
+    }
+  }
+
+  Future<StalkerResult> _getCats(Filters filters) async {
+    StalkerResult result = StalkerResult(maxItemsDefault, List.empty(), 0);
+    var currentCat = _cats[filters.type];
+    if (currentCat == null) {
+      _cats[filters.type] = await getCategories(filters.type);
+      currentCat = _cats[filters.type];
+    }
+    result.maxPage = _getPageCount(currentCat!.js!.length, maxItemsDefault);
+    Iterable<Category> catsTmp;
+    if (filters.query != null && filters.query!.isNotEmpty) {
+      catsTmp = currentCat!.js!
+          .where((x) => x.title!.contains(filters.query!))
+          .skip((filters.page - 1) * maxItemsDefault)
+          .take(maxItemsDefault);
+    } else {
+      catsTmp = currentCat!.js!
+          .skip((filters.page - 1) * maxItemsDefault)
+          .take(maxItemsDefault);
+    }
+    result.channels = catsTmp.map(_getChannelFromCat).toList();
+    return result;
+  }
+
+  _getPageCount(int itemsCount, int? maxItems) {
+    return (itemsCount / (maxItems ?? maxItemsDefault)).ceil();
+  }
+
+  Future<StalkerResult> _getFavs(Filters filters) async {
+    throw UnimplementedError();
+  }
+
+  Future<StalkerResult> _getAll(Filters filters) async {
     Stream stream;
     if (filters.type == StalkerType.live) {
       stream = await _getLive(filters);
@@ -124,6 +172,10 @@ class Stalker {
     return stream;
   }
 
+  Channel _getChannelFromCat(Category cat) {
+    return Channel(name: cat.title!, id: cat.id);
+  }
+
   StalkerResult _streamResponseToStalkerResult(Stream response) {
     return StalkerResult(
       response.js!.maxPageItems!,
@@ -153,7 +205,7 @@ class Stalker {
     }, createLinkFromJson);
   }
 
-  Future<Categories> getCategories(StalkerType type) async {
+  Future<CategoriesResponse> getCategories(StalkerType type) async {
     return await _get(
       type,
       type == StalkerType.live
