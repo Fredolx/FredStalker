@@ -180,10 +180,25 @@ class Sql {
     var db = await DbFactory.db;
     await db.execute(
       '''
-      INSERT INTO favorites (name, cmd, image, source_id)
-      VALUES (?, ?, ? ,?);
+      INSERT INTO favorites (name, cmd, image, stalker_id, source_id)
+      VALUES (?, ?, ? ,?, ?);
     ''',
-      [channel.name, channel.cmd, channel.image, sourceId],
+      [channel.name, channel.cmd, channel.image, channel.id, sourceId],
+    );
+  }
+
+  static Future<LinkedHashMap<String, Channel>> getAllFavs(int sourceId) async {
+    final db = await DbFactory.db;
+    final results = await db.getAll(
+      '''
+      SELECT name, cmd, image, stalker_id
+      FROM favorites
+      WHERE source_id = ?
+    ''',
+      [sourceId],
+    );
+    return LinkedHashMap.fromEntries(
+      results.map(rowToChannel).map((x) => MapEntry(x.id!, x)),
     );
   }
 

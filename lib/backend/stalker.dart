@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:fredstalker/backend/exceptions/invalid_value_exception.dart';
 import 'package:fredstalker/backend/sql.dart';
 import 'package:fredstalker/models/channel.dart';
@@ -23,6 +25,7 @@ class Stalker {
   Uri _url;
   final String _mac;
   Stream? _live;
+  LinkedHashMap<String, Channel> favorites = LinkedHashMap();
   final Map<StalkerType, CategoriesResponse> _cats = {};
   static const int maxItemsDefault = 14;
 
@@ -78,6 +81,7 @@ class Stalker {
 
   Future<void> initialize() async {
     addBaseParams((await _getToken(_mac)).js!.token!);
+    favorites = await Sql.getAllFavs(sourceId);
   }
 
   addBaseParams(String token) {
@@ -129,17 +133,24 @@ class Stalker {
     return (itemsCount / (maxItems ?? maxItemsDefault)).ceil();
   }
 
+  Future<void> addFav(Channel channel) async {
+    await Sql.addFavorite(channel, sourceId);
+    favorites[channel.id!] = channel;
+  }
+
   Future<StalkerResult> _getFavs(Filters filters) async {
-    final result = await Sql.searchFavs(
-      filters.query,
-      sourceId,
-      filters.page,
-      maxItemsDefault,
-    );
+    Iterable<Channel> result = favorites.values;
+    if (filters.query != null && filters.query!.isNotEmpty) {
+      result = result.where((x) => x.name.contains(filters.query!));
+    }
+    final int count = result.length;
+    result = result
+        .skip((filters.page - 1) * maxItemsDefault)
+        .take(maxItemsDefault);
     return StalkerResult(
       maxItemsDefault,
-      result.$1,
-      _getPageCount(result.$2, maxItemsDefault),
+      result.toList(),
+      _getPageCount(count, maxItemsDefault),
     );
   }
 
