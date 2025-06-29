@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:fredstalker/backend/db_factory.dart';
 import 'package:fredstalker/models/channel.dart';
+import 'package:fredstalker/models/media_type.dart';
 import 'package:fredstalker/models/source.dart';
 import 'package:sqlite_async/sqlite3.dart';
 import 'package:sqlite_async/sqlite_async.dart';
@@ -180,10 +181,29 @@ class Sql {
     var db = await DbFactory.db;
     await db.execute(
       '''
-      INSERT INTO favorites (name, cmd, image, stalker_id, source_id)
-      VALUES (?, ?, ? ,?, ?);
+      INSERT INTO favorites (name, cmd, image, stalker_id, media_type, source_id)
+      VALUES (?, ?, ? ,?, ?, ?);
     ''',
-      [channel.name, channel.cmd, channel.image, channel.id, sourceId],
+      [
+        channel.name,
+        channel.cmd,
+        channel.image,
+        channel.id,
+        channel.mediaType.index,
+        sourceId,
+      ],
+    );
+  }
+
+  static Future<void> removeFavorite(String id, int sourceId) async {
+    var db = await DbFactory.db;
+    await db.execute(
+      '''
+      DELETE FROM favorites
+      WHERE stalker_id = ? 
+        AND source_id = ?;
+    ''',
+      [id, sourceId],
     );
   }
 
@@ -191,7 +211,7 @@ class Sql {
     final db = await DbFactory.db;
     final results = await db.getAll(
       '''
-      SELECT name, cmd, image, stalker_id
+      SELECT name, cmd, image, stalker_id, media_type
       FROM favorites
       WHERE source_id = ?
     ''',
@@ -202,41 +222,13 @@ class Sql {
     );
   }
 
-  static Future<(List<Channel>, int)> searchFavs(
-    String? query,
-    int sourceId,
-    int page,
-    int pageSize,
-  ) async {
-    final db = await DbFactory.db;
-    final results = await db.getAll(
-      '''
-      SELECT name, cmd, image, stalker_id
-      FROM favorites
-      WHERE source_id = ?
-      AND name like ?
-      LIMIT ?, ?
-    ''',
-      [sourceId, "%$query%", (page - 1) * pageSize, pageSize],
-    );
-    final int count = (await db.get(
-      '''
-    SELECT COUNT(*)
-    FROM favorites
-    WHERE source_id = ?
-    AND name LIKE ?
-    ''',
-      [sourceId, "%$query%"],
-    )).columnAt(0);
-    return (results.map(rowToChannel).toList(), count);
-  }
-
   static Channel rowToChannel(Row row) {
     return Channel(
       name: row.columnAt(0),
       cmd: row.columnAt(1),
       image: row.columnAt(2),
       id: row.columnAt(3),
+      mediaType: MediaType.values[row.columnAt(4)],
     );
   }
 }

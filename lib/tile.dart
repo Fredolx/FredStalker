@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fredstalker/models/channel.dart';
 import 'package:fredstalker/models/memory.dart';
+import 'package:fredstalker/player.dart';
 
 class Tile extends StatefulWidget {
   const Tile({super.key, required this.channel});
@@ -11,6 +12,38 @@ class Tile extends StatefulWidget {
 }
 
 class _TileState extends State<Tile> {
+  Future<void> play() async {
+    //   if (widget.channel.mediaType == MediaType.group ||
+    //       widget.channel.mediaType == MediaType.serie) {
+    //     if (widget.channel.mediaType == MediaType.serie &&
+    //         !refreshedSeries.contains(widget.channel.id)) {
+    //       await Error.tryAsync(
+    //         () async {
+    //           await getEpisodes(widget.channel);
+    //           refreshedSeries.add(widget.channel.id!);
+    //         },
+    //         widget.parentContext,
+    //         null,
+    //         true,
+    //         false,
+    //       );
+    //     }
+    //     widget.updateViewMode(
+    //       widget.channel.mediaType,
+    //       widget.channel.mediaType == MediaType.group
+    //           ? widget.channel.id!
+    //           : int.parse(widget.channel.url!),
+    //       widget.channel.name,
+    //     );
+    //   } else {
+    // Sql.addToHistory(widget.channel.id!);
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => Player(channel: widget.channel)),
+    );
+    // }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -21,7 +54,11 @@ class _TileState extends State<Tile> {
         borderRadius: BorderRadius.circular(12),
         onTap: () => {},
         onLongPress: () async {
-          await Memory.stalker.addFav(widget.channel);
+          if (!Memory.stalker.favorites.containsKey(widget.channel.id)) {
+            await Memory.stalker.addFav(widget.channel);
+          } else {
+            await Memory.stalker.removeFav(widget.channel.id!);
+          }
           setState(() {});
         },
         child: Padding(

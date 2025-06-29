@@ -4,6 +4,7 @@ import 'package:fredstalker/backend/exceptions/invalid_value_exception.dart';
 import 'package:fredstalker/backend/sql.dart';
 import 'package:fredstalker/models/channel.dart';
 import 'package:fredstalker/models/filters.dart';
+import 'package:fredstalker/models/media_type.dart';
 import 'package:fredstalker/models/responses/categories_response.dart';
 import 'package:fredstalker/models/responses/create_link.dart';
 import 'package:fredstalker/models/responses/episodes.dart';
@@ -138,6 +139,11 @@ class Stalker {
     favorites[channel.id!] = channel;
   }
 
+  Future<void> removeFav(String id) async {
+    await Sql.removeFavorite(id, sourceId);
+    favorites.remove(id);
+  }
+
   Future<StalkerResult> _getFavs(Filters filters) async {
     Iterable<Channel> result = favorites.values;
     if (filters.query != null && filters.query!.isNotEmpty) {
@@ -164,7 +170,10 @@ class Stalker {
         if (filters.query != null) "search": filters.query!,
       }, streamFromJson);
     }
-    return _streamResponseToStalkerResult(stream);
+    return _streamResponseToStalkerResult(
+      stream,
+      fromStalkerType(filters.type),
+    );
   }
 
   Future<Stream> _getLive(Filters filters) async {
@@ -202,23 +211,29 @@ class Stalker {
   }
 
   Channel _getChannelFromCat(Category cat) {
-    return Channel(name: cat.title!, id: cat.id);
+    return Channel(name: cat.title!, id: cat.id, mediaType: MediaType.category);
   }
 
-  StalkerResult _streamResponseToStalkerResult(Stream response) {
+  StalkerResult _streamResponseToStalkerResult(
+    Stream response,
+    MediaType type,
+  ) {
     return StalkerResult(
       response.js!.maxPageItems!,
-      response.js!.data!.map(_getChannelFromStreamItem).toList(),
+      response.js!.data!
+          .map((x) => _getChannelFromStreamItem(x, type))
+          .toList(),
       (response.js!.totalItems! / response.js!.maxPageItems!).ceil(),
     );
   }
 
-  Channel _getChannelFromStreamItem(Data data) {
+  Channel _getChannelFromStreamItem(Data data, MediaType type) {
     return Channel(
       id: data.id,
       cmd: data.cmd,
       image: data.screenshotUri ?? data.logo,
       name: data.name!,
+      mediaType: type,
     );
   }
 

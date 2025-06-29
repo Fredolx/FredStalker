@@ -46,6 +46,7 @@ class DbFactory {
               "name" varchar(100),
               "cmd" varchar(200),
               "image" varchar(200),
+              "media_type" INTEGER,
               "source_id" INTEGER,
               FOREIGN KEY (source_id) REFERENCES sources(id) ON DELETE CASCADE
             );
