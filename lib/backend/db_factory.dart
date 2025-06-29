@@ -42,7 +42,7 @@ class DbFactory {
           await tx.execute('''
             CREATE TABLE "favorites" (
               "id" INTEGER PRIMARY KEY,
-              "stalker_id" INTEGER,
+              "stalker_id" varchar(50),
               "name" varchar(100),
               "cmd" varchar(200),
               "image" varchar(200),

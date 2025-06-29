@@ -44,6 +44,7 @@ dependencies:
   flutter_spinkit: ^5.2.1
   http: ^1.4.0
   sqlite3_flutter_libs: ^0.5.34
+  cached_network_image: ^3.4.1
 
 dev_dependencies:
   flutter_test:
@@ -65,6 +66,8 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - assets/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

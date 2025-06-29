@@ -116,10 +116,10 @@ class _HomeState extends State<Home> {
               physics: const NeverScrollableScrollPhysics(),
               itemCount: channels.length,
               gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 200,
+                maxCrossAxisExtent: 300,
                 mainAxisSpacing: 16,
                 crossAxisSpacing: 16,
-                childAspectRatio: 3 / 2,
+                childAspectRatio: 2,
               ),
               itemBuilder: (context, index) {
                 final item = channels[index];
