@@ -46,6 +46,8 @@ dependencies:
   sqlite3_flutter_libs: ^0.5.34
   cached_network_image: ^3.4.1
   media_kit_video: ^1.3.0
+  media_kit: ^1.2.0
+  media_kit_libs_video: ^1.0.6
 
 dev_dependencies:
   flutter_test:

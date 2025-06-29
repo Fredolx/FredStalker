@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fredstalker/models/channel.dart';
 import 'package:fredstalker/models/memory.dart';
 import 'package:fredstalker/player.dart';
+import 'package:fredstalker/error.dart';
 
 class Tile extends StatefulWidget {
   const Tile({super.key, required this.channel});
@@ -37,6 +38,14 @@ class _TileState extends State<Tile> {
     //     );
     //   } else {
     // Sql.addToHistory(widget.channel.id!);
+    await Error.tryAsync(() async {
+      widget.channel.cmd = await Memory.stalker.getLink(
+        widget.channel.cmd!,
+        widget.channel.mediaType,
+        null,
+      );
+    }, context);
+    print(widget.channel.cmd);
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => Player(channel: widget.channel)),
@@ -52,7 +61,7 @@ class _TileState extends State<Tile> {
           : Theme.of(context).colorScheme.surfaceContainer,
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: () => {},
+        onTap: play,
         onLongPress: () async {
           if (!Memory.stalker.favorites.containsKey(widget.channel.id)) {
             await Memory.stalker.addFav(widget.channel);

@@ -243,8 +243,20 @@ class Stalker {
     }, episodesFromJson);
   }
 
-  Future<CreateLink> createLink(String cmd, int? episode) async {
-    return await _get(StalkerType.live, StalkerAction.createLink, {
+  Future<String> getLink(String cmd, MediaType type, int? episode) async {
+    var res = await _createLink(cmd, fromMediaType(type), episode);
+    if (res.js?.cmd == null || res.js?.cmd?.isEmpty == true) {
+      throw Exception("Couldn't play channel");
+    }
+    return res.js!.cmd!.split(" ").last;
+  }
+
+  Future<CreateLink> _createLink(
+    String cmd,
+    StalkerType type,
+    int? episode,
+  ) async {
+    return await _get(type, StalkerAction.createLink, {
       "cmd": cmd,
       if (episode != null) "series": episode.toString(),
     }, createLinkFromJson);

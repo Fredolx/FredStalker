@@ -7,7 +7,7 @@ class Channel {
   final String? id;
   final String name;
   final String? image;
-  final String? cmd;
+  String? cmd;
   final MediaType mediaType;
 
   Channel({
