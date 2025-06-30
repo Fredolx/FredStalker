@@ -118,9 +118,9 @@ class _HomeState extends State<Home> {
               itemCount: channels.length,
               gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                 maxCrossAxisExtent: 300,
+                mainAxisExtent: 120,
                 mainAxisSpacing: 16,
                 crossAxisSpacing: 16,
-                childAspectRatio: 2.2,
               ),
               itemBuilder: (context, index) {
                 final item = channels[index];
