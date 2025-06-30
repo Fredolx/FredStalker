@@ -15,6 +15,7 @@ import 'package:fredstalker/models/stalker_result.dart';
 import 'package:fredstalker/models/stalker_type.dart';
 import 'package:fredstalker/models/view_type.dart';
 import 'package:http/http.dart' as http;
+import 'package:path/path.dart';
 
 class Stalker {
   static const List<String> potentialURLs = [
@@ -110,22 +111,18 @@ class Stalker {
       _cats[filters.type] = await getCategories(filters.type);
       currentCat = _cats[filters.type];
     }
-    Iterable<Category> catsTmp;
+    Iterable<Category> catsTmp = currentCat!.js!;
     if (filters.query != null && filters.query!.isNotEmpty) {
-      catsTmp = currentCat!.js!
-          .where(
-            (x) => x.title!.toLowerCase().trim().contains(
-              filters.query!.toLowerCase().trim(),
-            ),
-          )
-          .skip((filters.page - 1) * maxItemsDefault)
-          .take(maxItemsDefault);
-    } else {
-      catsTmp = currentCat!.js!
-          .skip((filters.page - 1) * maxItemsDefault)
-          .take(maxItemsDefault);
+      catsTmp = currentCat.js!.where(
+        (x) => x.title!.toLowerCase().trim().contains(
+          filters.query!.toLowerCase().trim(),
+        ),
+      );
     }
     result.maxPage = _getPageCount(catsTmp.length, maxItemsDefault);
+    catsTmp = catsTmp
+        .skip((filters.page - 1) * maxItemsDefault)
+        .take(maxItemsDefault);
     result.channels = catsTmp.map(_getChannelFromCat).toList();
     return result;
   }
