@@ -38,14 +38,19 @@ class _TileState extends State<Tile> {
     //     );
     //   } else {
     // Sql.addToHistory(widget.channel.id!);
-    await Error.tryAsync(() async {
-      widget.channel.cmd = await Memory.stalker.getLink(
-        widget.channel.cmd!,
-        widget.channel.mediaType,
-        null,
-      );
-    }, context);
-    print(widget.channel.cmd);
+    await Error.tryAsync(
+      () async {
+        widget.channel.cmd = await Memory.stalker.getLink(
+          widget.channel.cmd!,
+          widget.channel.mediaType,
+          null,
+        );
+      },
+      context,
+      null,
+      true,
+      false,
+    );
     Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => Player(channel: widget.channel)),

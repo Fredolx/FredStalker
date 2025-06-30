@@ -7,6 +7,7 @@ import 'package:fredstalker/models/media_type.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit/media_kit.dart' as mk;
 import 'package:media_kit_video/media_kit_video.dart' as mkvideo;
+import 'package:path/path.dart';
 
 class Player extends StatefulWidget {
   final Channel channel;
@@ -31,9 +32,6 @@ class _PlayerState extends State<Player> {
 
   Future<void> initAsync() async {
     await player.open(mk.Media(widget.channel.cmd!));
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      await key.currentState?.enterFullscreen();
-    });
     player.setPlaylistMode(mk.PlaylistMode.single);
     // if (widget.channel == MediaType.movie) {
     //   setLastPosition();
@@ -61,37 +59,27 @@ class _PlayerState extends State<Player> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: MaterialVideoControlsTheme(
-        normal: const MaterialVideoControlsThemeData(),
-        fullscreen: MaterialVideoControlsThemeData(
-          speedUpOnLongPress: false,
-          seekOnDoubleTap: widget.channel.mediaType != MediaType.live,
-          displaySeekBar: widget.channel.mediaType != MediaType.live,
-          seekBarMargin: const EdgeInsets.only(bottom: 60),
-          seekGesture: widget.channel.mediaType != MediaType.live,
-        ),
-        child: Video(
-          key: key,
-          controller: videoController,
-          onExitFullscreen: () async {
-            if (widget.channel.mediaType == MediaType.vod) {
-              // Sql.setPosition(
-              //   widget.channel.id!,
-              //   player.state.position.inSeconds,
-              // );
-            }
-            Navigator.of(context).pop();
-            Navigator.of(context).pop();
-            SystemChrome.setPreferredOrientations([
-              DeviceOrientation.portraitUp,
-              DeviceOrientation.portraitDown,
-              DeviceOrientation.landscapeLeft,
-              DeviceOrientation.landscapeRight,
-            ]);
-            SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-          },
-        ),
+      body: MaterialDesktopVideoControlsTheme(
+        normal: getThemeData(context),
+        fullscreen: getThemeData(context),
+        child: Video(key: key, controller: videoController),
       ),
+    );
+  }
+
+  MaterialDesktopVideoControlsThemeData getThemeData(BuildContext context) {
+    return MaterialDesktopVideoControlsThemeData(
+      displaySeekBar: widget.channel.mediaType != MediaType.live,
+      topButtonBar: [
+        IconButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          icon: const Icon(Icons.arrow_back, color: Colors.white, size: 32),
+        ),
+        const SizedBox(width: 10),
+        Text(widget.channel.name),
+      ],
     );
   }
 }
