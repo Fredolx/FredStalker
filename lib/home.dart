@@ -120,7 +120,7 @@ class _HomeState extends State<Home> {
                 maxCrossAxisExtent: 300,
                 mainAxisSpacing: 16,
                 crossAxisSpacing: 16,
-                childAspectRatio: 2,
+                childAspectRatio: 2.2,
               ),
               itemBuilder: (context, index) {
                 final item = channels[index];
