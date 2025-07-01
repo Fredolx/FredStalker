@@ -81,6 +81,10 @@ class _TileState extends State<Tile> {
         borderRadius: BorderRadius.circular(12),
         onTap: play,
         onLongPress: () async {
+          if (widget.channel.mediaType == MediaType.category ||
+              widget.channel.mediaType == MediaType.series) {
+            return;
+          }
           if (!Memory.stalker.favorites.containsKey(widget.channel.id)) {
             await Memory.stalker.addFav(widget.channel);
           } else {
