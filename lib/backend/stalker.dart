@@ -176,6 +176,7 @@ class Stalker {
         if (filters.categoryId != null) "category": filters.categoryId!,
         if (filters.categoryId != null) "genre": filters.categoryId!,
         if (filters.query != null) "search": filters.query!,
+        if (filters.seriesId != null) "movie_id": filters.seriesId!,
       }, streamFromJson);
     }
     return _streamResponseToStalkerResult(

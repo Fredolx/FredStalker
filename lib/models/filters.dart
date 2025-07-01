@@ -7,5 +7,7 @@ class Filters {
   StalkerType type;
   String? query;
   String? categoryId;
-  Filters(this.view, this.page, this.type, this.query);
+  String? seriesId;
+  int? season;
+  Filters(this.view, this.page, this.type, this.query, this.seriesId);
 }

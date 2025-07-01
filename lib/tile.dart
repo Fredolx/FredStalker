@@ -4,12 +4,14 @@ import 'package:fredstalker/backend/sql.dart';
 import 'package:fredstalker/models/channel.dart';
 import 'package:fredstalker/models/media_type.dart';
 import 'package:fredstalker/models/memory.dart';
+import 'package:fredstalker/models/node.dart';
+import 'package:fredstalker/models/node_type.dart';
 import 'package:fredstalker/player.dart';
 import 'package:fredstalker/error.dart';
 
 class Tile extends StatefulWidget {
-  const Tile({super.key, required this.channel, required this.setCategory});
-  final Function(String id, String name) setCategory;
+  const Tile({super.key, required this.channel, required this.setNode});
+  final Function(Node node) setNode;
   final Channel channel;
   @override
   State<Tile> createState() => _TileState();
@@ -41,7 +43,13 @@ class _TileState extends State<Tile> {
     //     );
     //   } else {
     if (widget.channel.mediaType == MediaType.category) {
-      widget.setCategory(widget.channel.id!, widget.channel.name);
+      widget.setNode(
+        Node(
+          id: widget.channel.id!,
+          name: widget.channel.name,
+          type: NodeType.category,
+        ),
+      );
       return;
     }
     Sql.addToHistory(widget.channel, Memory.stalker.sourceId);

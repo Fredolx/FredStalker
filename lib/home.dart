@@ -4,10 +4,13 @@ import 'package:fredstalker/bottom_nav.dart';
 import 'package:fredstalker/models/channel.dart';
 import 'package:fredstalker/models/filters.dart';
 import 'package:fredstalker/models/memory.dart';
+import 'package:fredstalker/models/node.dart';
+import 'package:fredstalker/models/node_type.dart';
 import 'package:fredstalker/models/stalker_type.dart';
 import 'package:fredstalker/models/view_type.dart';
 import 'package:fredstalker/tile.dart';
 import 'package:fredstalker/search_bar.dart' as search_bar;
+import 'package:fredstalker/models/stack.dart' as fstack;
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -16,7 +19,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  Filters filters = Filters(ViewType.all, 1, StalkerType.live, null);
+  Filters filters = Filters(ViewType.all, 1, StalkerType.live, null, null);
   List<Channel> channels = [];
   int? maxItemsPerPage;
   int? maxPages;
@@ -24,7 +27,7 @@ class _HomeState extends State<Home> {
   TextEditingController search = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   List<bool> isSelected = [true, false, false];
-  String? categoryName;
+  fstack.Stack nodeStack = fstack.Stack();
 
   @override
   void initState() {
@@ -85,13 +88,13 @@ class _HomeState extends State<Home> {
             SizedBox(height: 15),
             AnimatedSize(
               duration: const Duration(milliseconds: 300),
-              child: filters.categoryId != null
+              child: nodeStack.hasNodes()
                   ? Align(
                       alignment: Alignment.centerLeft,
                       child: Padding(
                         padding: EdgeInsetsGeometry.fromLTRB(20, 10, 0, 0),
                         child: Text(
-                          "Viewing category: $categoryName",
+                          nodeStack.get().toString(),
                           style: Theme.of(context).textTheme.titleLarge,
                         ),
                       ),
@@ -156,7 +159,7 @@ class _HomeState extends State<Home> {
               ),
               itemBuilder: (context, index) {
                 final item = channels[index];
-                return Tile(channel: item, setCategory: setCategory);
+                return Tile(channel: item, setNode: setNode);
               },
             ),
             Visibility(
@@ -195,18 +198,47 @@ class _HomeState extends State<Home> {
     await getResults();
   }
 
-  void setCategory(String id, String name) {
-    categoryName = name;
-    filters.view = ViewType.all;
-    filters.categoryId = id;
+  void setNode(Node node) {
+    nodeStack.add(node);
+    setFiltersNode(node);
     getResults();
   }
 
+  void setFiltersNode(Node node) {
+    switch (node.type) {
+      case NodeType.category:
+        filters.view = ViewType.all;
+        filters.categoryId = node.id;
+        break;
+      case NodeType.series:
+        filters.view = ViewType.all;
+        filters.seriesId = node.id;
+        break;
+      case NodeType.season:
+        filters.view = ViewType.all;
+        filters.season = int.parse(node.id);
+        break;
+    }
+  }
+
+  void undoFiltersNode(Node currentNode) {
+    switch (currentNode.type) {
+      case NodeType.category:
+        filters.categoryId = null;
+        break;
+      case NodeType.series:
+        filters.seriesId = null;
+      case NodeType.season:
+        filters.season = null;
+    }
+    filters.view = currentNode.type == NodeType.category
+        ? ViewType.categories
+        : ViewType.all;
+  }
+
   void handleBack(BuildContext context) {
-    if (filters.categoryId != null) {
-      filters.categoryId = null;
-      filters.view = ViewType.categories;
-      categoryName = null;
+    if (nodeStack.hasNodes()) {
+      undoFiltersNode(nodeStack.pop());
       getResults();
       return;
     }
