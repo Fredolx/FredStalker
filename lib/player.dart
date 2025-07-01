@@ -30,22 +30,16 @@ class _PlayerState extends State<Player> {
   }
 
   Future<void> initAsync() async {
-    await player.open(mk.Media(widget.channel.cmd!));
+    final seconds = widget.channel.mediaType == MediaType.vod
+        ? await Memory.stalker.getPosition(widget.channel.id!)
+        : null;
+    await player.open(
+      mk.Media(
+        widget.channel.cmd!,
+        start: seconds != null ? Duration(seconds: seconds) : null,
+      ),
+    );
     player.setPlaylistMode(mk.PlaylistMode.single);
-    if (widget.channel.mediaType == MediaType.vod) {
-      setLastPosition();
-    }
-  }
-
-  Future<void> setLastPosition() async {
-    var seconds = await Memory.stalker.getPosition(widget.channel.id!);
-    if (seconds != null) {
-      subscription = player.stream.duration.listen((event) {
-        if (event.inSeconds == 0) return;
-        player.seek(Duration(seconds: seconds));
-        subscription.cancel();
-      });
-    }
   }
 
   @override
