@@ -6,5 +6,6 @@ class Filters {
   int page;
   StalkerType type;
   String? query;
+  String? categoryId;
   Filters(this.view, this.page, this.type, this.query);
 }

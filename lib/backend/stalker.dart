@@ -173,6 +173,8 @@ class Stalker {
     } else {
       stream = await _get(filters.type, StalkerAction.getList, {
         "p": filters.page.toString(),
+        if (filters.categoryId != null) "category": filters.categoryId!,
+        if (filters.categoryId != null) "genre": filters.categoryId!,
         if (filters.query != null) "search": filters.query!,
       }, streamFromJson);
     }
@@ -189,29 +191,27 @@ class Stalker {
       {},
       streamFromJson,
     );
-    final stream = Stream(
-      js: StreamJs(
-        totalItems: _live!.js!.data!.length,
-        maxPageItems: maxItemsDefault,
-      ),
-    );
-    if (filters.query != null && filters.query!.isNotEmpty) {
-      var data = _live!.js!.data!.where(
-        (x) => x.name!.toLowerCase().trim().contains(
-          filters.query!.toLowerCase().trim(),
-        ),
+    final stream = Stream(js: StreamJs(maxPageItems: maxItemsDefault));
+    Iterable<Data> data = _live!.js!.data!;
+    if ((filters.query != null && filters.query!.isNotEmpty) ||
+        filters.categoryId != null) {
+      data = data.where(
+        (x) =>
+            (filters.query != null && filters.query!.isNotEmpty
+                ? x.name!.toLowerCase().trim().contains(
+                    filters.query!.toLowerCase().trim(),
+                  )
+                : true) &&
+            (filters.categoryId != null
+                ? x.tvGenreId == filters.categoryId
+                : true),
       );
-      stream.js!.totalItems = data.length;
-      stream.js!.data = data
-          .skip((filters.page - 1) * maxItemsDefault)
-          .take(maxItemsDefault)
-          .toList();
-    } else {
-      stream.js!.data = _live!.js!.data!
-          .skip((filters.page - 1) * maxItemsDefault)
-          .take(maxItemsDefault)
-          .toList();
     }
+    stream.js!.totalItems = data.length;
+    stream.js!.data = data
+        .skip((filters.page - 1) * maxItemsDefault)
+        .take(maxItemsDefault)
+        .toList();
     stream.js!.maxPageItems = maxItemsDefault;
     return stream;
   }

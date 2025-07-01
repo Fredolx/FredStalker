@@ -24,6 +24,7 @@ class _HomeState extends State<Home> {
   TextEditingController search = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   List<bool> isSelected = [true, false, false];
+  String? categoryName;
 
   @override
   void initState() {
@@ -53,6 +54,7 @@ class _HomeState extends State<Home> {
 
   updateViewMode(ViewType type) {
     filters.view = type;
+    filters.categoryId = null;
     filters.page = 1;
     getResults();
   }
@@ -75,6 +77,7 @@ class _HomeState extends State<Home> {
           children: [
             search_bar.SearchBar(
               focusNode: _focusNode,
+              back: () => handleBack(context),
               enabled: !initialLoading,
               searchController: search,
               load: getResultsQuery,
@@ -82,9 +85,25 @@ class _HomeState extends State<Home> {
             SizedBox(height: 15),
             AnimatedSize(
               duration: const Duration(milliseconds: 300),
+              child: filters.categoryId != null
+                  ? Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: EdgeInsetsGeometry.fromLTRB(20, 10, 0, 0),
+                        child: Text(
+                          "Viewing category: $categoryName",
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                      ),
+                    )
+                  : SizedBox.shrink(),
+            ),
+            AnimatedSize(
+              duration: const Duration(milliseconds: 300),
               child:
                   filters.view == ViewType.history ||
-                      filters.view == ViewType.favorites
+                      filters.view == ViewType.favorites ||
+                      filters.categoryId != null
                   ? SizedBox.shrink()
                   : Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -137,7 +156,7 @@ class _HomeState extends State<Home> {
               ),
               itemBuilder: (context, index) {
                 final item = channels[index];
-                return Tile(channel: item);
+                return Tile(channel: item, setCategory: setCategory);
               },
             ),
             Visibility(
@@ -174,5 +193,23 @@ class _HomeState extends State<Home> {
       filters.page = max ? maxPages! : filters.page + 1;
     });
     await getResults();
+  }
+
+  void setCategory(String id, String name) {
+    categoryName = name;
+    filters.view = ViewType.all;
+    filters.categoryId = id;
+    getResults();
+  }
+
+  void handleBack(BuildContext context) {
+    if (filters.categoryId != null) {
+      filters.categoryId = null;
+      filters.view = ViewType.categories;
+      categoryName = null;
+      getResults();
+      return;
+    }
+    Navigator.of(context).pop();
   }
 }

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 class SearchBar extends StatelessWidget {
   final TextEditingController searchController;
   final Function(String) load;
+  final VoidCallback back;
   final bool enabled;
   SearchBar({
     super.key,
@@ -12,6 +13,7 @@ class SearchBar extends StatelessWidget {
     required this.focusNode,
     required this.load,
     required this.enabled,
+    required this.back,
   });
   final FocusNode focusNode;
   Timer? _debounce;
@@ -29,10 +31,7 @@ class SearchBar extends StatelessWidget {
       color: Theme.of(context).colorScheme.surfaceContainer,
       child: Row(
         children: [
-          IconButton(
-            onPressed: () => Navigator.of(context).pop(),
-            icon: Icon(Icons.arrow_back),
-          ),
+          IconButton(onPressed: back, icon: Icon(Icons.arrow_back)),
           SizedBox(width: 10),
           Expanded(
             child: TextField(

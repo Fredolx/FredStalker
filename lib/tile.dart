@@ -2,12 +2,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:fredstalker/backend/sql.dart';
 import 'package:fredstalker/models/channel.dart';
+import 'package:fredstalker/models/media_type.dart';
 import 'package:fredstalker/models/memory.dart';
 import 'package:fredstalker/player.dart';
 import 'package:fredstalker/error.dart';
 
 class Tile extends StatefulWidget {
-  const Tile({super.key, required this.channel});
+  const Tile({super.key, required this.channel, required this.setCategory});
+  final Function(String id, String name) setCategory;
   final Channel channel;
   @override
   State<Tile> createState() => _TileState();
@@ -38,6 +40,10 @@ class _TileState extends State<Tile> {
     //       widget.channel.name,
     //     );
     //   } else {
+    if (widget.channel.mediaType == MediaType.category) {
+      widget.setCategory(widget.channel.id!, widget.channel.name);
+      return;
+    }
     Sql.addToHistory(widget.channel, Memory.stalker.sourceId);
     final channel = Channel(
       name: widget.channel.name,

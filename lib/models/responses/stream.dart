@@ -66,6 +66,7 @@ class Data {
   int? archive;
   String? screenshotUri;
   String? categoryId;
+  String? tvGenreId;
 
   Data({
     this.id,
@@ -78,6 +79,7 @@ class Data {
     this.archive,
     this.screenshotUri,
     this.categoryId,
+    this.tvGenreId,
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
@@ -91,6 +93,7 @@ class Data {
     archive: json["archive"],
     screenshotUri: json["screenshot_uri"],
     categoryId: json["category_id"],
+    tvGenreId: json["tv_genre_id"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -104,5 +107,6 @@ class Data {
     "archive": archive,
     "screenshot_uri": screenshotUri,
     "category_id": categoryId,
+    "tv_genre_id": tvGenreId,
   };
 }
