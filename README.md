@@ -6,7 +6,7 @@ The best Stalker IPTV experience period.
 
 ## Progress
 
-https://github.com/user-attachments/assets/ed6ff83c-8800-45f5-a7bb-52a8a00b0e5d
+https://github.com/user-attachments/assets/50202ac0-d0c3-410a-998d-d00061ad2c84
 
 
 
