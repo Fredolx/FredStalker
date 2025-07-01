@@ -80,36 +80,49 @@ class _HomeState extends State<Home> {
               load: getResultsQuery,
             ),
             SizedBox(height: 15),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ToggleButtons(
-                  borderRadius: BorderRadius.circular(10),
-                  isSelected: isSelected,
-                  onPressed: (int index) {
-                    setState(() {
-                      for (int i = 0; i < isSelected.length; i++) {
-                        isSelected[i] = i == index;
-                      }
-                    });
-                    updateMediaType(StalkerType.values[index]);
-                  },
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Text("Live"),
+            AnimatedSize(
+              duration: const Duration(milliseconds: 300),
+              child:
+                  filters.view == ViewType.history ||
+                      filters.view == ViewType.favorites
+                  ? SizedBox.shrink()
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ToggleButtons(
+                          borderRadius: BorderRadius.circular(10),
+                          isSelected: isSelected,
+                          onPressed: (int index) {
+                            setState(() {
+                              for (int i = 0; i < isSelected.length; i++) {
+                                isSelected[i] = i == index;
+                              }
+                            });
+                            updateMediaType(StalkerType.values[index]);
+                          },
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
+                              child: Text("Live"),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
+                              child: Text("Vods"),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
+                              child: Text("Series"),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Text("Vods"),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Text("Series"),
-                    ),
-                  ],
-                ),
-              ],
             ),
             GridView.builder(
               shrinkWrap: true,

@@ -263,7 +263,7 @@ class Sql {
       AND name like ?
       ORDER BY last_watched DESC
     ''',
-      [sourceId, "%$sourceId%"],
+      [sourceId, query != null ? "%$query%" : "%"],
     )).columnAt(0);
     return (results.map(rowToChannel).toList(), count);
   }

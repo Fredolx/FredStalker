@@ -28,11 +28,13 @@ class ArrowNav extends StatelessWidget {
               )
             : SizedBox(width: 48),
         Text(getPageText(), style: const TextStyle(fontSize: 24)),
-        IconButton(
-          icon: const Icon(Icons.arrow_right, size: 32),
-          onPressed: () => onIncrement(false),
-          onLongPress: () => onIncrement(true),
-        ),
+        value != maxValue
+            ? IconButton(
+                icon: const Icon(Icons.arrow_right, size: 32),
+                onPressed: () => onIncrement(false),
+                onLongPress: () => onIncrement(true),
+              )
+            : SizedBox.shrink(),
       ],
     );
   }

@@ -106,7 +106,11 @@ class Stalker {
 
   Future<StalkerResult> _getHistory(Filters filters) async {
     final result = await Sql.getHistory(filters.query, sourceId);
-    return StalkerResult(maxItemsDefault, result.$1, result.$2);
+    return StalkerResult(
+      maxItemsDefault,
+      result.$1,
+      _getPageCount(result.$2, maxItemsDefault),
+    );
   }
 
   Future<StalkerResult> _getCats(Filters filters) async {
