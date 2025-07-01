@@ -127,55 +127,56 @@ class Sql {
     return rowToSource(result);
   }
 
-  static Future setPosition(int channelId, int seconds) async {
+  static Future setPosition(String channelId, int sourceId, int seconds) async {
     var db = await DbFactory.db;
     await db.execute(
       '''
-      INSERT INTO movie_positions (channel_id, position)
-      VALUES (?, ?)
-      ON CONFLICT (channel_id)
+      INSERT INTO movie_positions (channel_id, position, source_id)
+      VALUES (?, ?, ?)
+      ON CONFLICT (channel_id, source_id)
       DO UPDATE SET
       position = excluded.position;
     ''',
-      [channelId, seconds],
+      [channelId, seconds, sourceId],
     );
   }
 
-  static Future<int?> getPosition(int channelId) async {
+  static Future<int?> getPosition(String channelId, int sourceId) async {
     var db = await DbFactory.db;
     var result = await db.getOptional(
       '''
       SELECT position FROM movie_positions
       WHERE channel_id = ?
+        AND source_id = ?
     ''',
-      [channelId],
+      [channelId, sourceId],
     );
     return result?.columnAt(0);
   }
 
-  static Future<void> addToHistory(int id) async {
-    var db = await DbFactory.db;
-    await db.execute(
-      '''
-      UPDATE channels
-      SET last_watched = strftime('%s', 'now')
-      WHERE id = ?
-    ''',
-      [id],
-    );
-    await db.execute('''
-      UPDATE channels
-      SET last_watched = NULL
-      WHERE last_watched IS NOT NULL
-		  AND id NOT IN (
-				SELECT id
-				FROM channels
-				WHERE last_watched IS NOT NULL
-				ORDER BY last_watched DESC
-				LIMIT 36
-		  )
-    ''');
-  }
+  // static Future<void> addToHistory(int id) async {
+  //   var db = await DbFactory.db;
+  //   await db.execute(
+  //     '''
+  //     UPDATE channels
+  //     SET last_watched = strftime('%s', 'now')
+  //     WHERE id = ?
+  //   ''',
+  //     [id],
+  //   );
+  //   await db.execute('''
+  //     UPDATE channels
+  //     SET last_watched = NULL
+  //     WHERE last_watched IS NOT NULL
+  // 	  AND id NOT IN (
+  // 			SELECT id
+  // 			FROM channels
+  // 			WHERE last_watched IS NOT NULL
+  // 			ORDER BY last_watched DESC
+  // 			LIMIT 36
+  // 	  )
+  //   ''');
+  // }
 
   static Future<void> addFavorite(Channel channel, int sourceId) async {
     var db = await DbFactory.db;

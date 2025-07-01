@@ -38,9 +38,15 @@ class _TileState extends State<Tile> {
     //     );
     //   } else {
     // Sql.addToHistory(widget.channel.id!);
+    final channel = Channel(
+      name: widget.channel.name,
+      mediaType: widget.channel.mediaType,
+      cmd: widget.channel.cmd,
+      id: widget.channel.id,
+    );
     await Error.tryAsync(
       () async {
-        widget.channel.cmd = await Memory.stalker.getLink(
+        channel.cmd = await Memory.stalker.getLink(
           widget.channel.cmd!,
           widget.channel.mediaType,
           null,
@@ -53,7 +59,7 @@ class _TileState extends State<Tile> {
     );
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => Player(channel: widget.channel)),
+      MaterialPageRoute(builder: (_) => Player(channel: channel)),
     );
     // }
   }

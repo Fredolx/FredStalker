@@ -52,7 +52,22 @@ class DbFactory {
             );
           ''');
           await tx.execute('''
-            CREATE UNIQUE INDEX index_favorites_unique ON favorites(name, source_id);
+            CREATE UNIQUE INDEX index_favorites_unique ON favorites(stalker_id, source_id);
+          ''');
+          await tx.execute('''
+            CREATE TABLE "history" (
+              "id" INTEGER PRIMARY KEY,
+              "stalker_id" varchar(50),
+              "source_id" integer,
+              "last_watched" integer,
+              FOREIGN KEY (source_id) REFERENCES sources(id) ON DELETE CASCADE
+            );
+          ''');
+          await tx.execute('''
+            CREATE UNIQUE INDEX index_history_stalker ON history(stalker_id, source_id);
+          ''');
+          await tx.execute('''
+            CREATE INDEX index_history_last_watched ON history(last_watched);
           ''');
         }),
       );

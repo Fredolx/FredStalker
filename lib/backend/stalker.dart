@@ -15,7 +15,6 @@ import 'package:fredstalker/models/stalker_result.dart';
 import 'package:fredstalker/models/stalker_type.dart';
 import 'package:fredstalker/models/view_type.dart';
 import 'package:http/http.dart' as http;
-import 'package:path/path.dart';
 
 class Stalker {
   static const List<String> potentialURLs = [
@@ -28,7 +27,7 @@ class Stalker {
   final String _mac;
   Stream? _live;
   LinkedHashMap<String, Channel> favorites = LinkedHashMap();
-  final Map<StalkerType, CategoriesResponse> _cats = {};
+  final HashMap<StalkerType, CategoriesResponse> _cats = HashMap();
   static const int maxItemsDefault = 14;
 
   Stalker(this._url, this._mac, this.sourceId);
@@ -287,5 +286,13 @@ class Stalker {
     );
     var response = await client.get(fUrl, headers: getHeaders());
     return fromJson(response.body);
+  }
+
+  Future<int?> getPosition(String channelId) {
+    return Sql.getPosition(channelId, sourceId);
+  }
+
+  Future<void> setPosition(String channelId, int seconds) {
+    return Sql.setPosition(channelId, sourceId, seconds);
   }
 }

@@ -1,13 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:fredstalker/models/channel.dart';
 import 'package:fredstalker/models/media_type.dart';
+import 'package:fredstalker/models/memory.dart';
 import 'package:media_kit_video/media_kit_video.dart';
 import 'package:media_kit/media_kit.dart' as mk;
 import 'package:media_kit_video/media_kit_video.dart' as mkvideo;
-import 'package:path/path.dart';
 
 class Player extends StatefulWidget {
   final Channel channel;
@@ -33,21 +32,21 @@ class _PlayerState extends State<Player> {
   Future<void> initAsync() async {
     await player.open(mk.Media(widget.channel.cmd!));
     player.setPlaylistMode(mk.PlaylistMode.single);
-    // if (widget.channel == MediaType.movie) {
-    //   setLastPosition();
-    // }
+    if (widget.channel.mediaType == MediaType.vod) {
+      setLastPosition();
+    }
   }
 
-  // Future<void> setLastPosition() async {
-  //   var seconds = await Sql.getPosition(widget.channel.id!);
-  //   if (seconds != null) {
-  //     subscription = player.stream.duration.listen((event) {
-  //       if (event.inSeconds == 0) return;
-  //       player.seek(Duration(seconds: seconds));
-  //       subscription.cancel();
-  //     });
-  //   }
-  // }
+  Future<void> setLastPosition() async {
+    var seconds = await Memory.stalker.getPosition(widget.channel.id!);
+    if (seconds != null) {
+      subscription = player.stream.duration.listen((event) {
+        if (event.inSeconds == 0) return;
+        player.seek(Duration(seconds: seconds));
+        subscription.cancel();
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -73,6 +72,10 @@ class _PlayerState extends State<Player> {
       topButtonBar: [
         IconButton(
           onPressed: () {
+            Memory.stalker.setPosition(
+              widget.channel.id!,
+              player.state.position.inSeconds,
+            );
             Navigator.of(context).pop();
           },
           icon: const Icon(Icons.arrow_back, color: Colors.white, size: 32),
