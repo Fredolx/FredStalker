@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:fredstalker/backend/sql.dart';
 import 'package:fredstalker/models/channel.dart';
 import 'package:fredstalker/models/media_type.dart';
 import 'package:fredstalker/models/memory.dart';
@@ -31,7 +32,7 @@ class _PlayerState extends State<Player> {
 
   Future<void> initAsync() async {
     final seconds = widget.channel.mediaType == MediaType.vod
-        ? await Memory.stalker.getPosition(widget.channel.id!)
+        ? await Sql.getPosition(widget.channel.id!, Memory.stalker.sourceId)
         : null;
     await player.open(
       mk.Media(
@@ -66,9 +67,10 @@ class _PlayerState extends State<Player> {
       topButtonBar: [
         IconButton(
           onPressed: () {
-            Memory.stalker.setPosition(
+            Sql.setPosition(
               widget.channel.id!,
               player.state.position.inSeconds,
+              Memory.stalker.sourceId,
             );
             Navigator.of(context).pop();
           },

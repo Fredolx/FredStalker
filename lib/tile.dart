@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:fredstalker/backend/sql.dart';
 import 'package:fredstalker/models/channel.dart';
 import 'package:fredstalker/models/memory.dart';
 import 'package:fredstalker/player.dart';
@@ -37,7 +38,7 @@ class _TileState extends State<Tile> {
     //       widget.channel.name,
     //     );
     //   } else {
-    // Sql.addToHistory(widget.channel.id!);
+    Sql.addToHistory(widget.channel, Memory.stalker.sourceId);
     final channel = Channel(
       name: widget.channel.name,
       mediaType: widget.channel.mediaType,

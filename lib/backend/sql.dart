@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:fredstalker/backend/db_factory.dart';
 import 'package:fredstalker/models/channel.dart';
+import 'package:fredstalker/models/filters.dart';
 import 'package:fredstalker/models/media_type.dart';
 import 'package:fredstalker/models/source.dart';
 import 'package:sqlite_async/sqlite3.dart';
@@ -154,30 +155,6 @@ class Sql {
     return result?.columnAt(0);
   }
 
-  // static Future<void> addToHistory(int id) async {
-  //   var db = await DbFactory.db;
-  //   await db.execute(
-  //     '''
-  //     UPDATE channels
-  //     SET last_watched = strftime('%s', 'now')
-  //     WHERE id = ?
-  //   ''',
-  //     [id],
-  //   );
-  //   await db.execute('''
-  //     UPDATE channels
-  //     SET last_watched = NULL
-  //     WHERE last_watched IS NOT NULL
-  // 	  AND id NOT IN (
-  // 			SELECT id
-  // 			FROM channels
-  // 			WHERE last_watched IS NOT NULL
-  // 			ORDER BY last_watched DESC
-  // 			LIMIT 36
-  // 	  )
-  //   ''');
-  // }
-
   static Future<void> addFavorite(Channel channel, int sourceId) async {
     var db = await DbFactory.db;
     await db.execute(
@@ -231,5 +208,63 @@ class Sql {
       id: row.columnAt(3),
       mediaType: MediaType.values[row.columnAt(4)],
     );
+  }
+
+  static Future<void> addToHistory(Channel channel, int sourceId) async {
+    var db = await DbFactory.db;
+    await db.execute(
+      '''
+      INSERT INTO history (stalker_id, name, cmd, image, media_type, source_id, last_watched)
+      VALUES (?, ?, ?, ?, ?, ?, strftime('%s', 'now'))
+      ON CONFLICT (stalker_id, source_id)
+      DO UPDATE SET
+      last_watched = excluded.last_watched;
+    ''',
+      [
+        channel.id,
+        channel.name,
+        channel.cmd,
+        channel.image,
+        channel.mediaType.index,
+        sourceId,
+      ],
+    );
+    await db.execute('''
+      DELETE FROM history
+		  WHERE id NOT IN (
+				SELECT id 
+				FROM history
+				ORDER BY last_watched DESC
+				LIMIT 28
+		  )
+    ''');
+  }
+
+  static Future<(List<Channel>, int rowCount)> getHistory(
+    String? query,
+    int sourceId,
+  ) async {
+    var db = await DbFactory.db;
+    final results = await db.getAll(
+      '''
+      SELECT name, cmd, image, stalker_id, media_type
+      FROM history
+      WHERE source_id = ?
+      AND name like ?
+      ORDER BY last_watched DESC
+    ''',
+      [sourceId, query != null ? "%$query%" : "%"],
+    );
+    final int count = (await db.get(
+      '''
+      SELECT count(*)
+      FROM history
+      WHERE source_id = ?
+      AND name like ?
+      ORDER BY last_watched DESC
+    ''',
+      [sourceId, "%$sourceId%"],
+    )).columnAt(0);
+    return (results.map(rowToChannel).toList(), count);
   }
 }

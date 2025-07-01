@@ -98,9 +98,15 @@ class Stalker {
       case ViewType.favorites:
         return _getFavs(filters);
       case ViewType.history:
+        return _getHistory(filters);
       case ViewType.settings:
         throw InvalidValueException(filters.view.toString());
     }
+  }
+
+  Future<StalkerResult> _getHistory(Filters filters) async {
+    final result = await Sql.getHistory(filters.query, sourceId);
+    return StalkerResult(maxItemsDefault, result.$1, result.$2);
   }
 
   Future<StalkerResult> _getCats(Filters filters) async {
@@ -286,13 +292,5 @@ class Stalker {
     );
     var response = await client.get(fUrl, headers: getHeaders());
     return fromJson(response.body);
-  }
-
-  Future<int?> getPosition(String channelId) {
-    return Sql.getPosition(channelId, sourceId);
-  }
-
-  Future<void> setPosition(String channelId, int seconds) {
-    return Sql.setPosition(channelId, sourceId, seconds);
   }
 }

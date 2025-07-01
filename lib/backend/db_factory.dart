@@ -58,6 +58,10 @@ class DbFactory {
             CREATE TABLE "history" (
               "id" INTEGER PRIMARY KEY,
               "stalker_id" varchar(50),
+              "name" varchar(100),
+              "cmd" varchar(200),
+              "image" varchar(200),
+              "media_type" INTEGER,
               "source_id" integer,
               "last_watched" integer,
               FOREIGN KEY (source_id) REFERENCES sources(id) ON DELETE CASCADE
@@ -68,6 +72,9 @@ class DbFactory {
           ''');
           await tx.execute('''
             CREATE INDEX index_history_last_watched ON history(last_watched);
+          ''');
+          await tx.execute('''
+            CREATE INDEX index_history_name ON history(name);
           ''');
         }),
       );
