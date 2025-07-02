@@ -128,7 +128,7 @@ class Sql {
     return rowToSource(result);
   }
 
-  static Future setPosition(String channelId, int sourceId, int seconds) async {
+  static Future setPosition(String channelId, int seconds, int sourceId) async {
     var db = await DbFactory.db;
     await db.execute(
       '''

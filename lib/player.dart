@@ -31,7 +31,9 @@ class _PlayerState extends State<Player> {
   }
 
   Future<void> initAsync() async {
-    final seconds = widget.channel.mediaType == MediaType.vod
+    final seconds =
+        widget.channel.mediaType == MediaType.vod ||
+            widget.channel.mediaType == MediaType.episode
         ? await Sql.getPosition(widget.channel.id!, Memory.stalker.sourceId)
         : null;
     await player.open(
@@ -67,7 +69,8 @@ class _PlayerState extends State<Player> {
       topButtonBar: [
         IconButton(
           onPressed: () {
-            if (widget.channel.mediaType == MediaType.vod) {
+            if (widget.channel.mediaType == MediaType.vod ||
+                widget.channel.mediaType == MediaType.episode) {
               Sql.setPosition(
                 widget.channel.id!,
                 player.state.position.inSeconds,
