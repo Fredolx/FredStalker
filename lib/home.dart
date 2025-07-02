@@ -28,6 +28,7 @@ class _HomeState extends State<Home> {
   final FocusNode _focusNode = FocusNode();
   List<bool> isSelected = [false, true, false];
   fstack.Stack nodeStack = fstack.Stack();
+  int _requestId = 0;
 
   @override
   void initState() {
@@ -40,8 +41,11 @@ class _HomeState extends State<Home> {
     initialLoading = false;
   }
 
-  getResults() async {
-    var result = await Memory.stalker.getStreams(filters);
+  Future<void> getResults() async {
+    final currentRequest = ++_requestId;
+    final result = await Memory.stalker.getStreams(filters);
+    if (currentRequest != _requestId) return; // Drop outdated result
+
     setState(() {
       maxItemsPerPage = result.maxItemsPerPage;
       channels = result.channels;
