@@ -7,7 +7,6 @@ import 'package:fredstalker/models/source.dart';
 import 'package:fredstalker/error.dart';
 import 'package:fredstalker/setup.dart';
 import 'package:fredstalker/source_tile.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class Select extends StatefulWidget {
   const Select({super.key});

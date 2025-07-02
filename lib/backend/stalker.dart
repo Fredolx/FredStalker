@@ -7,7 +7,6 @@ import 'package:fredstalker/models/filters.dart';
 import 'package:fredstalker/models/media_type.dart';
 import 'package:fredstalker/models/responses/categories_response.dart';
 import 'package:fredstalker/models/responses/create_link.dart';
-import 'package:fredstalker/models/responses/episodes.dart';
 import 'package:fredstalker/models/responses/handshake.dart';
 import 'package:fredstalker/models/responses/stream.dart';
 import 'package:fredstalker/models/season.dart';
@@ -66,7 +65,7 @@ class Stalker {
       try {
         response = await _getToken(_mac);
       } catch (e) {
-        print("URL (${_url}) failed: $e");
+        print("URL ($_url) failed: $e");
       }
       if (response?.js?.token != null) {
         break;

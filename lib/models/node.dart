@@ -4,7 +4,8 @@ class Node {
   final String id;
   final String name;
   final NodeType type;
-  const Node({required this.id, required this.name, required this.type});
+  String? query;
+  Node({required this.id, required this.name, required this.type, this.query});
   @override
   String toString() {
     return "Viewing ${type.name}: $name";

@@ -81,7 +81,8 @@ class _SourceTileState extends State<SourceTile> {
       true,
       false,
     );
-    if (result.success)
+    if (result.success) {
       Navigator.push(context, MaterialPageRoute(builder: (context) => Home()));
+    }
   }
 }

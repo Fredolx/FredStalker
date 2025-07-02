@@ -215,12 +215,16 @@ class _HomeState extends State<Home> {
   }
 
   void setNode(Node node) {
+    if (filters.query != null && filters.query!.isNotEmpty) {
+      node.query = filters.query;
+    }
     nodeStack.add(node);
     setFiltersNode(node);
     getResults();
   }
 
   void setFiltersNode(Node node) {
+    clearSearch();
     switch (node.type) {
       case NodeType.category:
         filters.view = ViewType.all;
@@ -237,6 +241,11 @@ class _HomeState extends State<Home> {
     }
   }
 
+  void clearSearch() {
+    filters.query = null;
+    search.clear();
+  }
+
   void undoFiltersNode(Node currentNode) {
     switch (currentNode.type) {
       case NodeType.category:
@@ -247,9 +256,17 @@ class _HomeState extends State<Home> {
       case NodeType.season:
         filters.season = null;
     }
+    reapplyFilters(currentNode);
     filters.view = currentNode.type == NodeType.category
         ? ViewType.categories
         : ViewType.all;
+  }
+
+  reapplyFilters(Node node) {
+    if (node.query != null && node.query!.isNotEmpty) {
+      filters.query = node.query;
+      search.text = filters.query!;
+    }
   }
 
   void handleBack(BuildContext context) {

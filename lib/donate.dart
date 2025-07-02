@@ -21,7 +21,13 @@ class _DonateState extends State<Donate> {
           Uri.parse("https://github.com/Fredolx/FredStalker/discussions/1"),
         ),
         child: Text(
-          style: TextStyle(color: Colors.blue, fontSize: 16),
+          style: TextStyle(
+            color: Colors.blue,
+            fontSize: 16,
+            decoration: _isHovered
+                ? TextDecoration.underline
+                : TextDecoration.none,
+          ),
           "FredStalker needs your support. Consider donating today to keep the project alive!",
         ),
       ),

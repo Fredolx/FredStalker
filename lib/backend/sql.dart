@@ -2,7 +2,6 @@ import 'dart:collection';
 
 import 'package:fredstalker/backend/db_factory.dart';
 import 'package:fredstalker/models/channel.dart';
-import 'package:fredstalker/models/filters.dart';
 import 'package:fredstalker/models/media_type.dart';
 import 'package:fredstalker/models/source.dart';
 import 'package:sqlite_async/sqlite3.dart';
