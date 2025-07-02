@@ -159,7 +159,7 @@ class Sql {
     var db = await DbFactory.db;
     await db.execute(
       '''
-      INSERT INTO favorites (name, cmd, image, stalker_id, media_type, source_id)
+      INSERT INTO favorites (name, cmd, image, stalker_id, media_type, source_id, episode_num)
       VALUES (?, ?, ? ,?, ?, ?);
     ''',
       [
@@ -169,6 +169,7 @@ class Sql {
         channel.id,
         channel.mediaType.index,
         sourceId,
+        channel.episodeNum,
       ],
     );
   }
@@ -189,7 +190,7 @@ class Sql {
     final db = await DbFactory.db;
     final results = await db.getAll(
       '''
-      SELECT name, cmd, image, stalker_id, media_type
+      SELECT name, cmd, image, stalker_id, media_type, episode_num
       FROM favorites
       WHERE source_id = ?
     ''',
@@ -207,6 +208,7 @@ class Sql {
       image: row.columnAt(2),
       id: row.columnAt(3),
       mediaType: MediaType.values[row.columnAt(4)],
+      episodeNum: row.columnAt(5),
     );
   }
 
@@ -214,8 +216,8 @@ class Sql {
     var db = await DbFactory.db;
     await db.execute(
       '''
-      INSERT INTO history (stalker_id, name, cmd, image, media_type, source_id, last_watched)
-      VALUES (?, ?, ?, ?, ?, ?, strftime('%s', 'now'))
+      INSERT INTO history (stalker_id, name, cmd, image, media_type, source_id, episode_num, last_watched)
+      VALUES (?, ?, ?, ?, ?, ?, ?, strftime('%s', 'now'))
       ON CONFLICT (stalker_id, source_id)
       DO UPDATE SET
       last_watched = excluded.last_watched;
@@ -227,6 +229,7 @@ class Sql {
         channel.image,
         channel.mediaType.index,
         sourceId,
+        channel.episodeNum,
       ],
     );
     await db.execute('''
@@ -247,7 +250,7 @@ class Sql {
     var db = await DbFactory.db;
     final results = await db.getAll(
       '''
-      SELECT name, cmd, image, stalker_id, media_type
+      SELECT name, cmd, image, stalker_id, media_type, episode_num
       FROM history
       WHERE source_id = ?
       AND name like ?
