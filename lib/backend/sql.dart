@@ -160,7 +160,7 @@ class Sql {
     await db.execute(
       '''
       INSERT INTO favorites (name, cmd, image, stalker_id, media_type, source_id, episode_num)
-      VALUES (?, ?, ? ,?, ?, ?);
+      VALUES (?, ?, ? ,?, ?, ?, ?);
     ''',
       [
         channel.name,
