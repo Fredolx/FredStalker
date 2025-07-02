@@ -27,7 +27,7 @@ class _TileState extends State<Tile> {
       }
       widget.setNode(
         Node(
-          id: widget.channel.id ?? "",
+          id: widget.channel.id!,
           name: widget.channel.name,
           type: fromMediaType(widget.channel.mediaType),
         ),

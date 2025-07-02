@@ -30,7 +30,7 @@ class Stalker {
   LinkedHashMap<String, Channel> favorites = LinkedHashMap();
   final HashMap<StalkerType, CategoriesResponse> _cats = HashMap();
   static const int maxItemsDefault = 14;
-  Season? currentSeason;
+  Season? _currentSeason;
 
   Stalker(this._url, this._mac, this.sourceId);
 
@@ -198,7 +198,7 @@ class Stalker {
   }
 
   void setCurrentSeason(Channel channel) {
-    currentSeason = Season(
+    _currentSeason = Season(
       cmd: channel.cmd!,
       episodes: channel.episodes!
           .map(
@@ -208,6 +208,7 @@ class Stalker {
               name: "Episode ${x.toString().padLeft(2, '0')}",
               episodeNum: x,
               image: channel.image,
+              id: "${channel.id}_$x",
             ),
           )
           .toList(),
@@ -216,7 +217,7 @@ class Stalker {
   }
 
   StalkerResult _getEpisodes(Filters filters) {
-    Iterable<Channel> data = currentSeason!.episodes;
+    Iterable<Channel> data = _currentSeason!.episodes;
     if (filters.query != null && filters.query!.isNotEmpty) {
       data = data.where((x) => x.name.contains(filters.query!));
     }
@@ -304,12 +305,6 @@ class Stalker {
       mediaType: type,
       episodes: data.series != null ? LinkedHashSet.from(data.series!) : null,
     );
-  }
-
-  Future<Episodes> getEpisodes(String id) async {
-    return await _get(StalkerType.series, StalkerAction.getList, {
-      "movie_id": id,
-    }, episodesFromJson);
   }
 
   Future<String> getLink(String cmd, MediaType type, int? episode) async {
