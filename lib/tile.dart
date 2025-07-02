@@ -19,35 +19,13 @@ class Tile extends StatefulWidget {
 
 class _TileState extends State<Tile> {
   Future<void> play() async {
-    //   if (widget.channel.mediaType == MediaType.group ||
-    //       widget.channel.mediaType == MediaType.serie) {
-    //     if (widget.channel.mediaType == MediaType.serie &&
-    //         !refreshedSeries.contains(widget.channel.id)) {
-    //       await Error.tryAsync(
-    //         () async {
-    //           await getEpisodes(widget.channel);
-    //           refreshedSeries.add(widget.channel.id!);
-    //         },
-    //         widget.parentContext,
-    //         null,
-    //         true,
-    //         false,
-    //       );
-    //     }
-    //     widget.updateViewMode(
-    //       widget.channel.mediaType,
-    //       widget.channel.mediaType == MediaType.group
-    //           ? widget.channel.id!
-    //           : int.parse(widget.channel.url!),
-    //       widget.channel.name,
-    //     );
-    //   } else {
-    if (widget.channel.mediaType == MediaType.category) {
+    if (widget.channel.mediaType != MediaType.live ||
+        widget.channel.mediaType != MediaType.vod) {
       widget.setNode(
         Node(
           id: widget.channel.id!,
           name: widget.channel.name,
-          type: NodeType.category,
+          type: fromMediaType(widget.channel.mediaType),
         ),
       );
       return;

@@ -179,10 +179,29 @@ class Stalker {
         if (filters.seriesId != null) "movie_id": filters.seriesId!,
       }, streamFromJson);
     }
-    return _streamResponseToStalkerResult(
+    final result = _streamResponseToStalkerResult(
       stream,
       fromStalkerType(filters.type),
     );
+    if (filters.seriesId != null) {
+      sortEpisodes(result.channels);
+    }
+    return result;
+  }
+
+  void sortEpisodes(List<Channel> episodes) {
+    episodes.sort((a, b) {
+      final seasonA = extractSeasonInt(a.name);
+      final seasonB = extractSeasonInt(b.name);
+      if (seasonA == null && seasonB == null) return 0;
+      if (seasonA == null) return -1;
+      if (seasonB == null) return 1;
+      return seasonA.compareTo(seasonB);
+    }); // Descending
+  }
+
+  int? extractSeasonInt(String str) {
+    return int.tryParse(str.split(" ").last.trim());
   }
 
   Future<Stream> _getLive(Filters filters) async {
