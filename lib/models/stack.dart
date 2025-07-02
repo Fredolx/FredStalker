@@ -19,4 +19,10 @@ class Stack {
   bool hasNodes() {
     return _nodes.isNotEmpty;
   }
+
+  Node? clear() {
+    final first = _nodes.firstOrNull;
+    _nodes.clear();
+    return first;
+  }
 }

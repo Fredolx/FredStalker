@@ -56,18 +56,34 @@ class _HomeState extends State<Home> {
   }
 
   updateViewMode(ViewType type) {
+    clearFilters(true);
     filters.view = type;
-    filters.categoryId = null;
-    filters.page = 1;
     getResults();
   }
 
   updateMediaType(StalkerType type) {
-    filters.type = type;
+    if (filters.type != type) {
+      clearFilters(false);
+      filters.type = type;
+    }
     setState(() {
       filters.page = 1;
     });
     getResults();
+  }
+
+  clearFilters(bool skipSettingView) {
+    filters.seriesId = null;
+    filters.season = null;
+    filters.page = 1;
+    filters.categoryId = null;
+    final firstNode = nodeStack.clear();
+    if (skipSettingView) return;
+    if (firstNode != null) {
+      filters.view = firstNode.type == NodeType.category
+          ? ViewType.categories
+          : ViewType.all;
+    }
   }
 
   @override
