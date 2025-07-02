@@ -14,7 +14,7 @@ class ProxyHttpOverrides extends HttpOverrides {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  HttpOverrides.global = ProxyHttpOverrides();
+  // HttpOverrides.global = ProxyHttpOverrides();
   final hasSources = await Sql.hasSources();
   runApp(App(skipSetup: hasSources));
 }
