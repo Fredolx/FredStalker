@@ -21,6 +21,8 @@ StalkerType fromMediaType(MediaType type) {
       return StalkerType.series;
     case MediaType.category:
       throw InvalidValueException(MediaType.category.toString());
+    case MediaType.episode:
+      throw InvalidValueException(MediaType.episode.toString());
     case MediaType.season:
       throw InvalidValueException(MediaType.season.toString());
   }

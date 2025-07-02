@@ -67,6 +67,7 @@ class Data {
   String? screenshotUri;
   String? categoryId;
   String? tvGenreId;
+  List<int>? series;
 
   Data({
     this.id,
@@ -80,6 +81,7 @@ class Data {
     this.screenshotUri,
     this.categoryId,
     this.tvGenreId,
+    this.series,
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
@@ -94,6 +96,9 @@ class Data {
     screenshotUri: json["screenshot_uri"],
     categoryId: json["category_id"],
     tvGenreId: json["tv_genre_id"],
+    series: json["series"] == null
+        ? []
+        : List<int>.from(json["series"]!.map((x) => x)),
   );
 
   Map<String, dynamic> toJson() => {

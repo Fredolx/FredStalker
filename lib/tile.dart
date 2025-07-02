@@ -19,11 +19,15 @@ class Tile extends StatefulWidget {
 
 class _TileState extends State<Tile> {
   Future<void> play() async {
-    if (widget.channel.mediaType != MediaType.live ||
-        widget.channel.mediaType != MediaType.vod) {
+    if (widget.channel.mediaType != MediaType.live &&
+        widget.channel.mediaType != MediaType.vod &&
+        widget.channel.mediaType != MediaType.episode) {
+      if (widget.channel.mediaType == MediaType.season) {
+        Memory.stalker.setCurrentSeason(widget.channel);
+      }
       widget.setNode(
         Node(
-          id: widget.channel.id!,
+          id: widget.channel.id ?? "",
           name: widget.channel.name,
           type: fromMediaType(widget.channel.mediaType),
         ),
@@ -42,7 +46,7 @@ class _TileState extends State<Tile> {
         channel.cmd = await Memory.stalker.getLink(
           widget.channel.cmd!,
           widget.channel.mediaType,
-          null,
+          widget.channel.episodeNum,
         );
       },
       context,

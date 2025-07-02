@@ -1,7 +1,7 @@
 import 'package:fredstalker/backend/exceptions/invalid_value_exception.dart';
 import 'package:fredstalker/models/stalker_type.dart';
 
-enum MediaType { live, vod, series, category, season }
+enum MediaType { live, vod, series, category, season, episode }
 
 MediaType fromStalkerType(StalkerType type) {
   switch (type) {

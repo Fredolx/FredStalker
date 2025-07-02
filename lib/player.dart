@@ -67,11 +67,13 @@ class _PlayerState extends State<Player> {
       topButtonBar: [
         IconButton(
           onPressed: () {
-            Sql.setPosition(
-              widget.channel.id!,
-              player.state.position.inSeconds,
-              Memory.stalker.sourceId,
-            );
+            if (widget.channel.mediaType == MediaType.vod) {
+              Sql.setPosition(
+                widget.channel.id!,
+                player.state.position.inSeconds,
+                Memory.stalker.sourceId,
+              );
+            }
             Navigator.of(context).pop();
           },
           icon: const Icon(Icons.arrow_back, color: Colors.white, size: 32),

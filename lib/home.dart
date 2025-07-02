@@ -19,14 +19,14 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  Filters filters = Filters(ViewType.all, 1, StalkerType.live, null, null);
+  Filters filters = Filters(ViewType.all, 1, StalkerType.vod, null, null);
   List<Channel> channels = [];
   int? maxItemsPerPage;
   int? maxPages;
   bool initialLoading = true;
   TextEditingController search = TextEditingController();
   final FocusNode _focusNode = FocusNode();
-  List<bool> isSelected = [true, false, false];
+  List<bool> isSelected = [false, true, false];
   fstack.Stack nodeStack = fstack.Stack();
 
   @override
@@ -216,7 +216,7 @@ class _HomeState extends State<Home> {
         break;
       case NodeType.season:
         filters.view = ViewType.all;
-        filters.season = int.parse(node.id);
+        filters.season = true;
         break;
     }
   }

@@ -1,5 +1,8 @@
+import 'package:fredstalker/models/channel.dart';
+
 class Season {
   String cmd;
-  int episode;
-  Season({required this.cmd, required this.episode});
+  String name;
+  List<Channel> episodes;
+  Season({required this.cmd, required this.episodes, required this.name});
 }

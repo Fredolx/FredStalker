@@ -10,6 +10,7 @@ import 'package:fredstalker/models/responses/create_link.dart';
 import 'package:fredstalker/models/responses/episodes.dart';
 import 'package:fredstalker/models/responses/handshake.dart';
 import 'package:fredstalker/models/responses/stream.dart';
+import 'package:fredstalker/models/season.dart';
 import 'package:fredstalker/models/stalker_action.dart';
 import 'package:fredstalker/models/stalker_result.dart';
 import 'package:fredstalker/models/stalker_type.dart';
@@ -29,6 +30,7 @@ class Stalker {
   LinkedHashMap<String, Channel> favorites = LinkedHashMap();
   final HashMap<StalkerType, CategoriesResponse> _cats = HashMap();
   static const int maxItemsDefault = 14;
+  Season? currentSeason;
 
   Stalker(this._url, this._mac, this.sourceId);
 
@@ -167,6 +169,9 @@ class Stalker {
   }
 
   Future<StalkerResult> _getAll(Filters filters) async {
+    if (filters.season == true) {
+      return _getEpisodes(filters);
+    }
     Stream stream;
     if (filters.type == StalkerType.live) {
       stream = await _getLive(filters);
@@ -179,14 +184,51 @@ class Stalker {
         if (filters.seriesId != null) "movie_id": filters.seriesId!,
       }, streamFromJson);
     }
+    final mediaType = fromStalkerType(filters.type);
     final result = _streamResponseToStalkerResult(
       stream,
-      fromStalkerType(filters.type),
+      mediaType == MediaType.series && filters.seriesId != null
+          ? MediaType.season
+          : mediaType,
     );
     if (filters.seriesId != null) {
       sortEpisodes(result.channels);
     }
     return result;
+  }
+
+  void setCurrentSeason(Channel channel) {
+    currentSeason = Season(
+      cmd: channel.cmd!,
+      episodes: channel.episodes!
+          .map(
+            (x) => Channel(
+              cmd: channel.cmd,
+              mediaType: MediaType.episode,
+              name: "Episode ${x.toString().padLeft(2, '0')}",
+              episodeNum: x,
+              image: channel.image,
+            ),
+          )
+          .toList(),
+      name: channel.name,
+    );
+  }
+
+  StalkerResult _getEpisodes(Filters filters) {
+    Iterable<Channel> data = currentSeason!.episodes;
+    if (filters.query != null && filters.query!.isNotEmpty) {
+      data = data.where((x) => x.name.contains(filters.query!));
+    }
+    final itemCount = data.length;
+    data = data
+        .skip((filters.page - 1) * maxItemsDefault)
+        .take(maxItemsDefault);
+    return StalkerResult(
+      maxItemsDefault,
+      data.toList(),
+      _getPageCount(itemCount, maxItemsDefault),
+    );
   }
 
   void sortEpisodes(List<Channel> episodes) {
@@ -260,6 +302,7 @@ class Stalker {
       image: data.screenshotUri ?? data.logo,
       name: data.name!,
       mediaType: type,
+      episodes: data.series != null ? LinkedHashSet.from(data.series!) : null,
     );
   }
 
@@ -270,7 +313,11 @@ class Stalker {
   }
 
   Future<String> getLink(String cmd, MediaType type, int? episode) async {
-    var res = await _createLink(cmd, fromMediaType(type), episode);
+    var res = await _createLink(
+      cmd,
+      type == MediaType.live ? StalkerType.live : StalkerType.vod,
+      episode,
+    );
     if (res.js?.cmd == null || res.js?.cmd?.isEmpty == true) {
       throw Exception("Couldn't play channel");
     }

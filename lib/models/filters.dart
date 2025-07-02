@@ -8,6 +8,6 @@ class Filters {
   String? query;
   String? categoryId;
   String? seriesId;
-  int? season;
+  bool? season;
   Filters(this.view, this.page, this.type, this.query, this.seriesId);
 }

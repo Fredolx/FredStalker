@@ -11,9 +11,11 @@ NodeType fromMediaType(MediaType type) {
       return NodeType.series;
     case MediaType.season:
       return NodeType.season;
+    case MediaType.episode:
+      throw InvalidValueException(MediaType.episode.toString());
     case MediaType.live:
       throw InvalidValueException(MediaType.live.toString());
     case MediaType.vod:
-      throw InvalidValueException(MediaType.live.toString());
+      throw InvalidValueException(MediaType.vod.toString());
   }
 }
