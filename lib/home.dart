@@ -183,7 +183,7 @@ class _HomeState extends State<Home> {
               },
             ),
             Visibility(
-              visible: !initialLoading,
+              visible: !initialLoading && (maxPages != null && maxPages! > 0),
               child: ArrowNav(
                 value: filters.page,
                 maxValue: maxPages,
