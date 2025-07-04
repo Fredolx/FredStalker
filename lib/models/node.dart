@@ -5,7 +5,14 @@ class Node {
   final String name;
   final NodeType type;
   String? query;
-  Node({required this.id, required this.name, required this.type, this.query});
+  int? page;
+  Node({
+    required this.id,
+    required this.name,
+    required this.type,
+    this.query,
+    this.page,
+  });
   @override
   String toString() {
     return "Viewing ${type.name}: $name";

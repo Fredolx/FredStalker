@@ -44,8 +44,7 @@ class _HomeState extends State<Home> {
   Future<void> getResults() async {
     final currentRequest = ++_requestId;
     final result = await Memory.stalker.getStreams(filters);
-    if (currentRequest != _requestId) return; // Drop outdated result
-
+    if (currentRequest != _requestId) return;
     setState(() {
       maxItemsPerPage = result.maxItemsPerPage;
       channels = result.channels;
@@ -112,7 +111,7 @@ class _HomeState extends State<Home> {
                   ? Align(
                       alignment: Alignment.centerLeft,
                       child: Padding(
-                        padding: EdgeInsetsGeometry.fromLTRB(20, 10, 0, 0),
+                        padding: EdgeInsetsGeometry.fromLTRB(20, 10, 0, 20),
                         child: Text(
                           nodeStack.get().toString(),
                           style: Theme.of(context).textTheme.titleLarge,
@@ -219,9 +218,8 @@ class _HomeState extends State<Home> {
   }
 
   void setNode(Node node) {
-    if (filters.query != null && filters.query!.isNotEmpty) {
-      node.query = filters.query;
-    }
+    node.query = filters.query;
+    node.page = filters.page;
     nodeStack.add(node);
     setFiltersNode(node);
     getResults();
@@ -229,6 +227,7 @@ class _HomeState extends State<Home> {
 
   void setFiltersNode(Node node) {
     clearSearch();
+    filters.page = 1;
     switch (node.type) {
       case NodeType.category:
         filters.view = ViewType.all;
@@ -271,6 +270,7 @@ class _HomeState extends State<Home> {
       filters.query = node.query;
       search.text = filters.query!;
     }
+    if (node.page != null && node.page! > 1) filters.page = node.page!;
   }
 
   void handleBack(BuildContext context) {
