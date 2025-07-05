@@ -1,0 +1,8 @@
+[Desktop Entry]
+Categories=AudioVideo
+Comment=The best Stalker IPTV app
+Exec=fredstalker
+Icon=dev.fredol.fredstalker
+Name=FredStalker
+Terminal=false
+Type=Application
