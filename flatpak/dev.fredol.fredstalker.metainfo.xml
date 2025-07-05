@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+  <id>dev.fredol.open-tv</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>AGPL-3.0</project_license>
+  <name>FredStalker</name>
+  <summary>The best Stalker IPTV app</summary>
+  <content_rating type="oars-1.1" />
+  <branding>
+    <color type="primary" scheme_preference="light">#4549cc</color>
+    <color type="primary" scheme_preference="dark">#4549cc</color>
+  </branding>
+  <description>
+    <p>Easy to use, fast and beautiful IPTV app designed from the ground up to be used with Stalker (Mac Address)</p>
+    <p>Features:</p>
+    <ul>
+        <li>Optimized for speed, expect FredStalker to be at least 50% faster than other Stalker players 🚀</li>
+        <li>Designed uniquely for Stalker and only for Stalker 🎨</li>
+        <li>Blazing fast search supported in all views to find any content 🔍</li>
+        <li>Add your channels to favorites ⭐</li>
+        <li>Enjoy a smooth embedded player to watch any content lag-free with full codec support powered by libmpv 🎬</li>
+        <li>Watch history ⌛</li>
+        <li>More to come! Donate the project to support new features like EPG, recording, downloading...</li>
+    </ul>
+    <p>PLEASE consider donating, I've been working on IPTV app for years now, completely free and for the benefit of open source. I do not have any corporate sponsors</p>
+  </description>
+    <categories>
+    <category>AudioVideo</category>
+  </categories>
+  <launchable type="desktop-id">dev.fredol.open-tv.desktop</launchable>
+  <releases>
+    <release version="1.0.0" date="2025-07-04">
+        <description>
+            <p>First release!</p>
+        </description>
+    </release>
+  </releases>
+ <screenshots>
+  <screenshot type="default">
+    <image>https://raw.githubusercontent.com/Fredolx/FredStalker/f92093b6a58a784b39399e2f7b5da66dcdcb53a8/flatpak/screenshots/main.png</image>
+    <caption>Main window</caption>
+  </screenshot>
+  <screenshot>
+    <image>https://raw.githubusercontent.com/Fredolx/FredStalker/f92093b6a58a784b39399e2f7b5da66dcdcb53a8/flatpak/screenshots/add_source.png</image>
+    <caption>Adding a source</caption>
+  </screenshot>
+  <screenshot>
+    <image>https://raw.githubusercontent.com/Fredolx/FredStalker/f92093b6a58a784b39399e2f7b5da66dcdcb53a8/flatpak/screenshots/source_select.png</image>
+    <caption>Select a source</caption>
+  </screenshot>
+  <screenshot>
+    <image>https://raw.githubusercontent.com/Fredolx/FredStalker/f92093b6a58a784b39399e2f7b5da66dcdcb53a8/flatpak/screenshots/favs.png</image>
+    <caption>Favorites</caption>
+  </screenshot>
+  <screenshot>
+    <image>https://raw.githubusercontent.com/Fredolx/FredStalker/f92093b6a58a784b39399e2f7b5da66dcdcb53a8/flatpak/screenshots/history.png</image>
+    <caption>History</caption>
+  </screenshot>
+  <screenshot>
+    <image>https://raw.githubusercontent.com/Fredolx/FredStalker/f92093b6a58a784b39399e2f7b5da66dcdcb53a8/flatpak/screenshots/play.png</image>
+    <caption>Player</caption>
+  </screenshot>
+ </screenshots>
+ <developer_name>Frédéric Lachapelle</developer_name>
+ <url type="homepage">https://github.com/Fredolx/fredstalker</url>
+ <url type="bugtracker">https://github.com/Fredolx/fredstalker/issues</url>
+ <url type="faq">https://github.com/Fredolx/fredstalker</url>
+ <url type="help">https://github.com/Fredolx/fredstalker/issues</url>
+ <url type="donation">https://github.com/sponsors/Fredolx</url>
+</component>
