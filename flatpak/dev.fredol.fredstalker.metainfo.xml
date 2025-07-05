@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop">
-  <id>dev.fredol.open-tv</id>
+  <id>dev.fredol.fredstalker</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>AGPL-3.0</project_license>
   <name>FredStalker</name>
@@ -27,7 +27,7 @@
     <categories>
     <category>AudioVideo</category>
   </categories>
-  <launchable type="desktop-id">dev.fredol.open-tv.desktop</launchable>
+  <launchable type="desktop-id">dev.fredol.fredolstalker.desktop</launchable>
   <releases>
     <release version="1.0.0" date="2025-07-04">
         <description>
