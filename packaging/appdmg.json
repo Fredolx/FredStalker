@@ -1,0 +1,12 @@
+{
+  "title": "FredStalker",
+  "contents": [
+    { "x": 448, "y": 200, "type": "link", "path": "/Applications" },
+    {
+      "x": 192,
+      "y": 200,
+      "type": "file",
+      "path": "../build/macos/Build/Products/Release/FredStalker.app"
+    }
+  ]
+}
