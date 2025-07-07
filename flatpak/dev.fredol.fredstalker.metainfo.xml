@@ -27,7 +27,7 @@
     <categories>
     <category>AudioVideo</category>
   </categories>
-  <launchable type="desktop-id">dev.fredol.fredolstalker.desktop</launchable>
+  <launchable type="desktop-id">dev.fredol.fredstalker.desktop</launchable>
   <releases>
     <release version="1.0.0" date="2025-07-04">
         <description>
